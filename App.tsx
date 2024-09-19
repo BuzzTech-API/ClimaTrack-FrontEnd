@@ -1,9 +1,11 @@
-import { Text } from 'react-native';
+import { SafeAreaView, StatusBar } from 'react-native';
 
 export default function App() {
+
   return (
-    <>
-      <Text>Hello World!</Text>
-    </>
+    <SafeAreaView>
+      <StatusBar />
+
+    </SafeAreaView>
   );
 }

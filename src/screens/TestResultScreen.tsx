@@ -16,7 +16,7 @@ type ParamList = {
   
   type Props = StackScreenProps<ParamList, 'result'>;
   
-const TesteResult:React.FC<Props> = ({route}) => {
+const TestResult:React.FC<Props> = ({route}) => {
     
     const inputValues = route.params
     inputValues
@@ -33,4 +33,4 @@ const TesteResult:React.FC<Props> = ({route}) => {
 }
 
 
-export default TesteResult
+export default TestResult

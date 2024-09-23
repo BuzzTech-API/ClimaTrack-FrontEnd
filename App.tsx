@@ -1,8 +1,8 @@
 import { View, TextInput, Text } from 'react-native';
 import { CartesianChart, Line, useChartPressState } from "victory-native";
 import Animated, { SharedValue, useAnimatedProps } from 'react-native-reanimated';
-import { Circle } from '@shopify/react-native-skia';
-
+import { Circle, useFont } from '@shopify/react-native-skia';
+import {format} from 'date-fns'
 
 const DATA = [
   {day: new Date("2024-08-10").getTime(), rainfall: 50},
@@ -26,7 +26,7 @@ function ToolTip({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) {
 
 export default function App() {
   const {state, isActive} = useChartPressState({x: 0, y: {rainfall: 0}})
-
+  const font = useFont(require("./src/fonts/Inter_24pt-Regular.ttf"))
 
   const animatedText = useAnimatedProps(() =>{
     return {
@@ -45,7 +45,7 @@ export default function App() {
 
   return (
     <View>
-      <View style={{width: '100%', height: 300}}>
+      <View style={{width: '90%', height: 300, margin: 'auto'}}>
       {isActive &&(
         <View>
           <AnimatedTextImput
@@ -84,7 +84,10 @@ export default function App() {
         axisOptions={{
           tickCount: 10,
           labelOffset: {x:3, y: 2},
-          labelPosition: "inset"
+          labelPosition: "outset",
+          font: font,
+          formatYLabel: (value) => `${value}`,
+          formatXLabel: (value) => format(new Date(), "MM/yy")
         }}
         >
 

@@ -39,7 +39,7 @@ function ToolTip({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) {
 
 
   // Requisição para a API
-  useEffect(() => {
+ /* useEffect(() => {
     async function fetchData() {
       try {
         const response = await fetch(''); 
@@ -59,6 +59,7 @@ function ToolTip({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) {
 
     fetchData();
   }, []);
+*/
 
   const animatedText = useAnimatedProps(() =>{
     return {
@@ -75,13 +76,14 @@ function ToolTip({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) {
     }
   })
 
-  if (loading) {
+ /* if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
   if (error) {
     return <Text>{error}</Text>;
   }
+    */
 
   return (
     <View>

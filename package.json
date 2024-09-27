@@ -20,7 +20,7 @@
     "react-native-calendars": "^1.1307.0",
     "react-native-date-picker": "^5.0.7",
     "react-native-gesture-handler": "^2.19.0",
-    "react-native-reanimated": "^3.15.3",
+    "react-native-reanimated": "^3.10.1",
     "victory-native": "^41.4.0"
   },
   "devDependencies": {

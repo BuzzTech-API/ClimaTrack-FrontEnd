@@ -138,7 +138,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({navigation}) => {
           warning={endDateError}/>
       </View>
       <View style={styles.buttonContainer}>
-        <ButtonComponent buttonText='result' onPress={handleSearch}/>
+        <ButtonComponent buttonText='Pesquisar' onPress={handleSearch}/>
       </View>
       {/*<View style={styles.footerContainer}>*/}
         <Footer />

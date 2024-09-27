@@ -1,13 +1,12 @@
-import { ScrollView } from "react-native";
-import GraphicRainfall from "src/components/graphicRainfall";
-import GraphicTemperature from "~/components/graphicTemperature";
+import { SafeAreaView, StatusBar, Text, TextInput, View } from 'react-native';
+import SeachScreen from '~/screens/SearchLocation';
 
 
 export default function App() {
-    return (
-        <ScrollView>
-            <GraphicRainfall/>
-            <GraphicTemperature/>
-        </ScrollView>
-    )
+
+  return (
+    <View>
+      <SeachScreen/>
+    </View>
+  );
 }

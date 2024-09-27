@@ -2,6 +2,7 @@ import { Text, View } from "react-native"
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 
+//Página temporária
 
 type ParamList = {
 

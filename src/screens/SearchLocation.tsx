@@ -4,26 +4,11 @@ import Header from '~/components/Header';
 import Footer from '~/components/Footer';
 import InputComponent from '~/components/InputComponent';
 import ButtonComponent from '~/components/ButtonComponent';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 
-type ParamList = {
-  
-  search: undefined
-  result:{
-    latNumber: number,
-    longNumber: number,
-    startDateNumber: number,
-    endDateNumber: number
-  }
-}
+interface SearchLocationProps {}
 
-type InputScreenNavigationProp = StackNavigationProp<ParamList, 'search'>;
-
-interface SearchLocationProps {
-  navigation: InputScreenNavigationProp
-}
-
-const SearchLocation: React.FC<SearchLocationProps> = ({navigation}) => {
+const SearchLocation: React.FC<SearchLocationProps> = () => {
 
   const [lat, setLat] = useState<string>('');
   const [long, setLong] = useState<string>('');
@@ -84,10 +69,6 @@ const SearchLocation: React.FC<SearchLocationProps> = ({navigation}) => {
         startDateNumber,
         endDateNumber
       };
-
-      //aqui vai ser o redirecionamento para a outra página
-      navigation.navigate('result', inputValues)
-
       console.log(inputValues); // FETCH AQUI
     } else {
       Alert.alert('Por favor, corrija os campos destacados.');
@@ -138,7 +119,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({navigation}) => {
           warning={endDateError}/>
       </View>
       <View style={styles.buttonContainer}>
-        <ButtonComponent buttonText='result' onPress={handleSearch}/>
+        <ButtonComponent buttonText='Pesquisar' onPress={handleSearch}/>
       </View>
       {/*<View style={styles.footerContainer}>*/}
         <Footer />

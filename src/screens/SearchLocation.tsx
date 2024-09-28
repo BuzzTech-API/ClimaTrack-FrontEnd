@@ -28,26 +28,49 @@ const SearchLocation: React.FC<SearchLocationProps> = () => {
   let nowDay: string;
   let nowMonth: string;
   let nowYear: string;
+  let startDay: string;
+  let startMonth:string;
+  let startYear: string;
+  let endDay: string;
+  let endMonth:string;
+  let endYear: string;
+  let startBissexto: boolean;
+  let endBissexto: boolean;
 
   const validateDate = (date: string) => {
 
-    let day:string;
-    let month:string;
-    let year: string;
+    if (date == startDate) {
+      if (parseInt((date[4] + date[5])) > 12) {
+        startDay = (date[0] + date[1])
+        startMonth = (date[2] + date[3])
+        startYear = (date[4] + date[5] + date[6] + date[7])
 
-    if (parseInt((date[4] + date[5])) > 12) {
-      day = (date[0] + date[1])
-      month = (date[2] + date[3])
-      year = (date[4] + date[5] + date[6] + date[7])
+        return (parseInt(startYear+startMonth+startDay));
+      }
+      if (parseInt((date[4] + date[5])) <= 12) {
+        startDay = (date[6] + date[7])
+        startMonth = (date[4] + date[5])
+        startYear = (date[0] + date[1] + date[2] + date[3])
 
-      return (parseInt(year+month+day));
+        return (parseInt(startYear+startMonth+startDay));
+      }
     }
-    if (parseInt((date[4] + date[5])) <= 12) {
-      day = (date[6] + date[7])
-      month = (date[4] + date[5])
-      year = (date[0] + date[1] + date[2] + date[3])
 
-      return (parseInt(year+month+day));
+    if(date == endDate) {
+      if (parseInt((date[4] + date[5])) > 12) {
+        endDay = (date[0] + date[1])
+        endMonth = (date[2] + date[3])
+        endYear = (date[4] + date[5] + date[6] + date[7])
+
+        return (parseInt(endYear+endMonth+endDay));
+      }
+      if (parseInt((date[4] + date[5])) <= 12) {
+        endDay = (date[6] + date[7])
+        endMonth = (date[4] + date[5])
+        endYear = (date[0] + date[1] + date[2] + date[3])
+
+        return (parseInt(endYear+endMonth+endDay));
+      }
     }
   }
 
@@ -59,6 +82,8 @@ const SearchLocation: React.FC<SearchLocationProps> = () => {
     startDateNumber = +startDate;
     endDateNumber = +endDate;
     nowDate = new Date();    
+    startBissexto = false;
+    endBissexto = false;
 
     setLatError('');
     setLongError('');
@@ -119,6 +144,89 @@ const SearchLocation: React.FC<SearchLocationProps> = () => {
     if (endDateNumber > parseInt(nowYear+nowMonth+nowDay)) {
       setEndDateError('Data inválida');
       isValid = false;
+    } 
+
+    if ((parseInt(startMonth) > 12) || (parseInt(startMonth) < 1)) {
+      setStartDateError('Data inválida');
+      isValid = false;
+    }
+
+    if ((parseInt(endMonth) > 12) || (parseInt(endMonth) < 1)) {
+      setEndDateError('Data inválida');
+      isValid = false;
+    }
+
+    if ((parseInt(startDay) > 31) || (parseInt(startDay) < 1)) {
+      setStartDateError('Data inválida');
+      isValid = false;
+    }
+
+    if ((parseInt(endDay) > 31) || (parseInt(endDay) < 1)) {
+      setEndDateError('Data inválida');
+      isValid = false;
+    }
+
+    if (['04', '06', '09', '11'].includes(startMonth)) {
+      if (parseInt(startDay) > 30) {
+        setStartDateError('Data inválida');
+        isValid = false;
+      }
+    }
+
+    if (['04', '06', '09', '11'].includes(endMonth)) {
+      if (parseInt(endDay) > 30) {
+        setEndDateError('Data inválida');
+        isValid = false;
+      }
+    }
+
+    if (parseInt(startYear) % 4 === 0) {
+      if (parseInt(startYear) % 100 === 0) {
+        if (parseInt(startYear) % 400 === 0) {
+          startBissexto = true;
+        };
+        startBissexto = false;
+      };
+      startBissexto = true;
+    };
+
+    if (parseInt(endYear) % 4 === 0) {
+      if (parseInt(endYear) % 100 === 0) {
+        if (parseInt(endYear) % 400 === 0) {
+          endBissexto = true;
+        };
+        endBissexto = false;
+      };
+      endBissexto = true;
+    };
+
+
+    if (['02'].includes(startMonth) && startBissexto == false) {
+      if (parseInt(startDay) > 28) {
+        setStartDateError('Data inválida');
+        isValid = false;
+      } 
+    } 
+    
+    if (['02'].includes(endMonth) && endBissexto == false) {
+      if (parseInt(endDay) > 28) {
+        setEndDateError('Data inválida');
+        isValid = false;
+      }
+    }
+
+    if (['02'].includes(startMonth) && startBissexto == true) {
+      if (parseInt(startDay) > 29) {
+        setStartDateError('Data inválida');
+        isValid = false;
+      }
+    } 
+
+    if (['02'].includes(endMonth) && endBissexto == true) {
+      if (parseInt(endDay) > 29) {
+        setEndDateError('Data inválida');
+        isValid = false;
+      }
     } 
 
     return isValid;

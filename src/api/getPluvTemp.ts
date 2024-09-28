@@ -4,7 +4,7 @@ import { reqPluvTempType } from '../types/reqPluvTempType';
 
 export const fetchPluviTemp = async (infosReq: reqPluvTempType) => {
 
-  const parameters = `?parameters=T2M&longitude=${infosReq.longitude}&latitude=${infosReq.latitude}&start=${infosReq.startDate}&end=${infosReq.endDate}`;
+  const parameters = `?longitude=${infosReq.longitude}&latitude=${infosReq.latitude}&start=${infosReq.startDate}&end=${infosReq.endDate}`;
 
   try {
     const response = await api.get(`/climate/${parameters}`);

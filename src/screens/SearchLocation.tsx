@@ -1,31 +1,32 @@
+import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
-import Header from '~/components/Header';
-import Footer from '~/components/Footer';
-import InputComponent from '~/components/InputComponent';
+import MapView, { LatLng, Marker, PROVIDER_GOOGLE, Region } from 'react-native-maps';
+
 import ButtonComponent from '~/components/ButtonComponent';
-import { StackNavigationProp } from '@react-navigation/stack';
+import Footer from '~/components/Footer';
+import Header from '~/components/Header';
+import InputComponent from '~/components/InputComponent';
 
 type ParamList = {
-  search: undefined
-  result:{
-    latNumber: number,
-    longNumber: number,
-    startDateNumber: number,
-    endDateNumber: number
-  }
-}
+  search: undefined;
+  result: {
+    latNumber: number;
+    longNumber: number;
+    startDateNumber: number;
+    endDateNumber: number;
+  };
+};
 
 type InputScreenNavigationProp = StackNavigationProp<ParamList, 'search'>;
 
 interface SearchLocationProps {
-  navigation: InputScreenNavigationProp
+  navigation: InputScreenNavigationProp;
 }
 
-const SearchLocation: React.FC<SearchLocationProps> = ({navigation}) => {
-
-  const [lat, setLat] = useState<string>('');
-  const [long, setLong] = useState<string>('');
+const SearchLocation: React.FC<SearchLocationProps> = ({ navigation }) => {
+  const [lat, setLat] = useState<string>('-23.186648');
+  const [long, setLong] = useState<string>('-45.881435');
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
 
@@ -33,6 +34,10 @@ const SearchLocation: React.FC<SearchLocationProps> = ({navigation}) => {
   const [longError, setLongError] = useState<string>('');
   const [startDateError, setStartDateError] = useState<string>('');
   const [endDateError, setEndDateError] = useState<string>('');
+  const [markerCood, setmarkerCood] = useState<LatLng>({
+    latitude: -23.186648,
+    longitude: -45.881435,
+  });
 
   let latNumber: number;
   let longNumber: number;
@@ -81,11 +86,11 @@ const SearchLocation: React.FC<SearchLocationProps> = ({navigation}) => {
         latNumber,
         longNumber,
         startDateNumber,
-        endDateNumber
+        endDateNumber,
       };
 
       //aqui vai ser o redirecionamento para a outra página
-      navigation.navigate('result', inputValues)
+      navigation.navigate('result', inputValues);
 
       console.log(inputValues); // FETCH AQUI
     } else {
@@ -93,54 +98,81 @@ const SearchLocation: React.FC<SearchLocationProps> = ({navigation}) => {
     }
   };
 
+  const onRegionChange = (region: Region) => {
+    setmarkerCood({
+      latitude: region.latitude,
+      longitude: region.longitude,
+    });
+    setLat(region.latitude + '');
+    setLong(region.longitude + '');
+  };
+
   return (
     <View style={styles.container}>
       {/*<View style={styles.headerContainer}>*/}
-        <Header title="Pesquisar Local"/>
+      <Header title="Pesquisar Local" />
+      <View style={styles.mapContainer}>
+        <MapView
+          provider={PROVIDER_GOOGLE}
+          style={StyleSheet.absoluteFill}
+          onRegionChangeComplete={onRegionChange}
+          region={{
+            latitude: -23.186648,
+            longitude: -45.881435,
+            latitudeDelta: 1,
+            longitudeDelta: 1,
+          }}>
+          <Marker coordinate={markerCood} />
+        </MapView>
+      </View>
       {/*</View>*/}
       <View style={styles.bodyContainer}>
         <View style={styles.coordenateContainer}>
-          <InputComponent 
-            label="Latitude" 
-            placeHolder='Digite a latitude'
-            inputWidth={280} 
-            value={lat} 
-            onChangeText={setLat} 
-            maxLength={10} 
-            warning={latError}/>
-          <InputComponent 
-            label="Longitude" 
-            placeHolder='Digite a longitude'
-            inputWidth={280} 
-            value={long} 
-            onChangeText={setLong} 
-            maxLength={10} 
-            warning={longError}/>
+          <InputComponent
+            label="Latitude"
+            placeHolder="Digite a latitude"
+            inputWidth={115}
+            value={lat}
+            onChangeText={setLat}
+            maxLength={10}
+            warning={latError}
+          />
+          <InputComponent
+            label="Longitude"
+            placeHolder="Digite a longitude"
+            inputWidth={115}
+            value={long}
+            onChangeText={setLong}
+            maxLength={10}
+            warning={longError}
+          />
         </View>
       </View>
       <View style={styles.dateContainer}>
-        <InputComponent 
+        <InputComponent
           label="Data de Início"
           placeHolder="Dia/Mês/Ano"
-          inputWidth={115} 
-          value={startDate} 
-          onChangeText={setStartDate} 
-          maxLength={8} 
-          warning={startDateError}/>
-        <InputComponent 
-          label="Data de Fim" 
-          placeHolder='Dia/Mês/Ano'
-          inputWidth={115} 
-          value={endDate} 
+          inputWidth={115}
+          value={startDate}
+          onChangeText={setStartDate}
+          maxLength={8}
+          warning={startDateError}
+        />
+        <InputComponent
+          label="Data de Fim"
+          placeHolder="Dia/Mês/Ano"
+          inputWidth={115}
+          value={endDate}
           onChangeText={setEndDate}
-          maxLength={8} 
-          warning={endDateError}/>
+          maxLength={8}
+          warning={endDateError}
+        />
       </View>
       <View style={styles.buttonContainer}>
-        <ButtonComponent buttonText='Pesquisar' onPress={handleSearch}/>
+        <ButtonComponent buttonText="Pesquisar" onPress={handleSearch} />
       </View>
       {/*<View style={styles.footerContainer}>*/}
-        <Footer />
+      <Footer />
       {/*</View>*/}
     </View>
   );
@@ -148,39 +180,43 @@ const SearchLocation: React.FC<SearchLocationProps> = ({navigation}) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(255, 255, 255, 1)",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    color: "rgba(0, 0, 0, 1)",
-    width: "100%",
-    height: "100%",
-    
+    backgroundColor: 'rgba(255, 255, 255, 1)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    color: 'rgba(0, 0, 0, 1)',
+    width: '100%',
+    height: '100%',
   },
   headerContainer: {
-    position: "absolute",
+    position: 'absolute',
     paddingBottom: 0,
-    },
-  bodyContainer: {
-    
   },
+  bodyContainer: {},
   coordenateContainer: {
-    flexDirection: "column",
-    gap: 30,
-    paddingTop: "35%"
+    flexDirection: 'row',
+    gap: 40,
+    paddingTop: '5%',
   },
   dateContainer: {
-    alignSelf: "center",
-    flexDirection: "row",
-    gap: 60,
-    marginTop: 50,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    gap: 40,
+    marginTop: 30,
   },
   buttonContainer: {
-    marginTop: 40,
+    marginTop: 20,
+    marginBottom: 80,
   },
   footerContainer: {
-    position: "absolute",
-    paddingBottom: 0,
+    position: 'absolute',
+    paddingBottom: 10,
+  },
+  mapContainer: {
+    marginTop: 40,
+    display: 'flex',
+    width: '100%',
+    height: 300,
   },
 });
 

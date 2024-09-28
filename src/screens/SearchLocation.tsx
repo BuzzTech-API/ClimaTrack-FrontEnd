@@ -7,7 +7,6 @@ import ButtonComponent from '~/components/ButtonComponent';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 type ParamList = {
-  
   search: undefined
   result:{
     latNumber: number,

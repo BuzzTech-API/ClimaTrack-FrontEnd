@@ -20,7 +20,6 @@ type ParamList = {
 const TestResult:React.FC<Props> = ({route}) => {
     
     const inputValues = route.params
-    inputValues
 
     return(
         <View>

@@ -12,10 +12,10 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='search'>
-        <Stack.Screen name="search" component={SearchLocation}/>
+      <Stack.Navigator initialRouteName='search'> 
+        <Stack.Screen name="search" component={SearchLocation}  options={{ headerShown: false }}/>
         {/* esse erro é estranho mas ele continua funcionando normal, olhe e ignore */}
-        <Stack.Screen name="result" component={TestResult}/>
+        <Stack.Screen name="result" component={TestResult} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

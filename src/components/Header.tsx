@@ -1,43 +1,46 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 
-
 interface HeaderProps {
-    title?: string;
+  title?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({title}) => {
+const Header: React.FC<HeaderProps> = ({ title }) => {
   return (
     <View style={styles.header}>
-        <View style={styles.line} />
-        <View style={styles.title}>
-            <Text style={styles.textTitle}>{title}</Text>
-        </View>
+      <View style={styles.line} />
+      <View style={styles.title}>
+        <Text style={styles.textTitle}>{title}</Text>
+      </View>
     </View>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
   header: {
-    width: '100%',
-    height: '6%', 
+    backgroundColor: 'rgba(255, 255, 255, 1)',
+    height: 80,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
   line: {
-    backgroundColor: "rgba(147, 147, 147, 1)",
+    backgroundColor: 'rgba(147, 147, 147, 1)',
     width: '100%',
-    height: '55%',
+    height: 25,
   },
   title: {
     width: '100%',
-    height: '100%',
   },
   textTitle: {
     fontSize: 20,
-    fontWeight: "700",
-    alignSelf: "flex-start",
+    fontWeight: '700',
+    alignSelf: 'flex-start',
     paddingLeft: 20,
-    paddingTop: 20,
-  }
+    paddingTop: 25,
+  },
 });
 
 export default Header;
+

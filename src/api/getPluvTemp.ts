@@ -13,4 +13,3 @@ export const fetchPluviTemp = async (infosReq: reqPluvTempType) => {
     throw new Error('Erro ao buscar dados climáticos');
   }
 };
-

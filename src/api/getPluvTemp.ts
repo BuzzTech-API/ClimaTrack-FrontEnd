@@ -1,15 +1,15 @@
-import api from "./api";
-import {reqPluvTempType} from "../types/reqPluvTempType";
+// fetchPluviTemp.js
+import api from './api';
+import { reqPluvTempType } from '../types/reqPluvTempType';
 
-// Código para pegar os dados de pluviosidade e temperatura do backend.
+export const fetchPluviTemp = async (infosReq: reqPluvTempType) => {
+  const parameters = `?longitude=${infosReq.longitude}&latitude=${infosReq.latitude}&start=${infosReq.startDate}&end=${infosReq.endDate}`;
 
-export const fetchPluviTemp = async(infosReq: reqPluvTempType) => {
-    await api.get("/getPluviTemp",{
-        params: infosReq
-    } )
-    .then(response => {
-        return response.data;
-    }).catch(error => {
-        throw new Error(`Erro ao pegar os dados de pluviosidade e temperatura: ${error.message}`)
-    })
-}
+  try {
+    const response = await api.get(`/climate/${parameters}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar dados climáticos:', error);
+    throw new Error('Erro ao buscar dados climáticos');
+  }
+};

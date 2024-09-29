@@ -38,26 +38,26 @@ function GraphicRainfall() {
 
   // Requisição para a API
   /* useEffect(() => {
-     async function fetchData() {
-       try {
-         const response = await fetch(''); 
-         const result = await response.json();
-         // Supondo que a API retorna um array de objetos com campos "day" e "rainfall"
-         const formattedData = Array.isArray(result) ? result.map(item => ({
-           day: new Date(item.day).getTime(),
-           rainfall: item.rainfall,
-         })) : [];
-         setData(formattedData);
-       } catch (error) {
-         setError(error instanceof Error ? error.message : 'Erro ao carregar os dados');
-       } finally {
-         setLoading(false);
-       }
-     }
- 
-     fetchData();
-   }, []);
- */
+    async function fetchData() {
+      try {
+        const response = await fetch(''); 
+        const result = await response.json();
+        // Supondo que a API retorna um array de objetos com campos "day" e "rainfall"
+        const formattedData = Array.isArray(result) ? result.map(item => ({
+          day: new Date(item.day).getTime(),
+          rainfall: item.rainfall,
+        })) : [];
+        setData(formattedData);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'Erro ao carregar os dados');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+*/
 
   const animatedText = useAnimatedProps(() => {
     return {
@@ -75,13 +75,13 @@ function GraphicRainfall() {
   });
 
   /* if (loading) {
-     return <ActivityIndicator size="large" color="#0000ff" />;
-   }
- 
-   if (error) {
-     return <Text>{error}</Text>;
-   }
-     */
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  if (error) {
+    return <Text>{error}</Text>;
+  }
+    */
 
   return (
     <View>

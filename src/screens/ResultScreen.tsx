@@ -1,12 +1,14 @@
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import { fetchPluviTemp } from '~/api/getPluvTemp';
 import ButtonComponent from '~/components/ButtonComponent';
 import Footer from '~/components/Footer';
 import Header from '~/components/Header';
 import InputComponent from '~/components/InputComponent';
+import GraphicRainfall from '~/components/graphicRainfall';
 import { TempPluvData } from '~/types/resquestTempPluv';
 
 type ParamList = {
@@ -57,7 +59,7 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
   }, []);
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container}>
       <Header title="Resultado da pesquisa" />
       <View style={styles.bodyContainer}>
         {/* Exibindo Latitude e Longitude */}
@@ -66,6 +68,19 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
           <Text style={styles.coordinateText}>Longitude: {long}</Text>
         </View>
 
+        <View style={{ height: 400 }}>
+          <ScrollView style={styles.itensShow}>
+            {dataPluvTemp.data.map((item, index) => {
+              return (
+                <View key={index} style={styles.item}>
+                  <Text>Dia: {item.day}</Text>
+                  <Text>Temperatura: {item.temperature}</Text>
+                  <Text>Preciptação: {item.precipitation}</Text>
+                </View>
+              );
+            })}
+          </ScrollView>
+        </View>
         {/* Contêiner para os campos de data lado a lado */}
         <View style={styles.dateContainer}>
           <InputComponent
@@ -100,7 +115,7 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
         </View>
       </View>
       <Footer />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -139,6 +154,17 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: 'center',
+  },
+  itensShow: {
+    flexDirection: 'column',
+    width: '100%',
+    gap: 40,
+    overflow: 'scroll',
+    height: '100%',
+  },
+  item: {
+    marginTop: 20,
+    marginBottom: 20,
   },
 });
 

@@ -1,12 +1,12 @@
-import axios from "axios";
+import axios from 'axios';
 
 // Arquivo para definir as configurações das requisições como url, headers e etc..
 
-const baseURL = "https://localhost:5000"
+const baseURL = 'http://192.168.1.9:8000';
 
 const api = axios.create({
-    baseURL,
-    // headers: {}
-})
+  baseURL,
+  // headers: {}
+});
 
-export default api
+export default api;

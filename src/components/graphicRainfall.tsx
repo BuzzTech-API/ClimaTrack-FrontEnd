@@ -1,9 +1,15 @@
+import { StackScreenProps } from '@react-navigation/stack';
 import { Circle, useFont } from '@shopify/react-native-skia';
 import { format } from 'date-fns';
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { View, TextInput, Text, ActivityIndicator } from 'react-native';
 import Animated, { SharedValue, useAnimatedProps } from 'react-native-reanimated';
 import { CartesianChart, Line, useChartPressState } from 'victory-native';
+import { fetchPluviTemp } from '~/api/getPluvTemp';
+import { TempPluvData } from '~/types/resquestTempPluv';
+
+
 
 const DATA = [
   { day: new Date('2024-08-10').getTime(), rainfall: 50 },
@@ -22,6 +28,7 @@ interface DataPoint {
   rainfall: number; // Chuva registrada
 }
 
+
 Animated.addWhitelistedNativeProps({ text: true });
 const AnimatedTextImput = Animated.createAnimatedComponent(TextInput);
 
@@ -29,35 +36,60 @@ function ToolTip({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) {
   return <Circle cx={x} cy={y} r={8} color="black" />;
 }
 
-function GraphicRainfall() {
+type ParamList = {
+  search: undefined;
+  result: {
+    latNumber: number;
+    longNumber: number;
+    startDateNumber: number;
+    endDateNumber: number;
+  };
+};
+type Props = StackScreenProps<ParamList, 'result'>;
+
+const GraphicRainfall: React.FC<Props> = ({ route }) => {
+  const params = route.params;
   const { state, isActive } = useChartPressState({ x: 0, y: { rainfall: 0 } });
   const font = useFont(require('src/fonts/Inter_24pt-Regular.ttf'));
-  const [data, setData] = useState<DataPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dataPluvTemp, setDataPluvTemp] = React.useState<TempPluvData>({
+    message: '',
+    status: '',
+    data: [],
+  });
+  const [data, setData] = useState<DataPoint[]>([]);
 
-  // Requisição para a API
-  /* useEffect(() => {
-    async function fetchData() {
+
+  useEffect(() => {
+    (async () => {
       try {
-        const response = await fetch(''); 
-        const result = await response.json();
-        // Supondo que a API retorna um array de objetos com campos "day" e "rainfall"
-        const formattedData = Array.isArray(result) ? result.map(item => ({
+        const fetchedData: TempPluvData = await fetchPluviTemp({
+          latitude: params.latNumber,
+          longitude: params.longNumber,
+          startDate: params.startDateNumber,
+          endDate: params.endDateNumber,
+        });
+
+        setDataPluvTemp(fetchedData);
+
+        const formattedData = fetchedData.data.map(item => ({
           day: new Date(item.day).getTime(),
-          rainfall: item.rainfall,
-        })) : [];
-        setData(formattedData);
+          rainfall: item.precipitation,
+        }));   
+
+        setData(formattedData)
+        console.log(fetchedData);
+        ;
       } catch (error) {
-        setError(error instanceof Error ? error.message : 'Erro ao carregar os dados');
+        setError('Erro ao carregar os dados');
       } finally {
         setLoading(false);
       }
-    }
+    })();
+  }, [params]);
 
-    fetchData();
-  }, []);
-*/
+
 
   const animatedText = useAnimatedProps(() => {
     return {
@@ -74,14 +106,14 @@ function GraphicRainfall() {
     };
   });
 
-  /* if (loading) {
+  if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
   if (error) {
     return <Text>{error}</Text>;
   }
-    */
+
 
   return (
     <View>
@@ -105,14 +137,13 @@ function GraphicRainfall() {
         {!isActive && (
           <View>
             <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#000' }}>
-              {DATA[DATA.length - 1].rainfall.toFixed(2)}mm
+              {data[data.length - 1].rainfall.toFixed(2)}mm
             </Text>
             <Text>Hoje</Text>
           </View>
         )}
         <CartesianChart
-          //  data={data} // Usando os dados da API
-          data={DATA}
+          data={data}
           xKey="day"
           yKeys={['rainfall']}
           chartPressState={state}

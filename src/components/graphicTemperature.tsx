@@ -1,5 +1,6 @@
 import { Circle, useFont } from '@shopify/react-native-skia';
 import { format } from 'date-fns';
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { View, TextInput, Text } from 'react-native';
 import Animated, { SharedValue, useAnimatedProps } from 'react-native-reanimated';

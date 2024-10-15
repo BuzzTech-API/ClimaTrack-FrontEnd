@@ -28,10 +28,11 @@ const styles = StyleSheet.create({
   line: {
     backgroundColor: 'rgba(147, 147, 147, 1)',
     width: '100%',
-    height: 25,
+    height: 0,
   },
   title: {
     width: '100%',
+    paddingTop: 20
   },
   textTitle: {
     fontSize: 20,

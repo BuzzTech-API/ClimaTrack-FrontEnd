@@ -17,7 +17,7 @@ export default function App() {
         <Stack.Navigator initialRouteName="search">
           <Stack.Screen name="search" component={SearchLocation} options={{ headerShown: false }} />
           {/* esse erro é estranho mas ele continua funcionando normal, olhe e ignore */}
-          <Stack.Screen name="result" component={GraphicRainfall} options={{ headerShown: false }} />
+          <Stack.Screen name="result" component={ResultScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>

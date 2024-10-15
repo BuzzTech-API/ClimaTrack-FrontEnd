@@ -1,6 +1,6 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import { Circle, useFont } from '@shopify/react-native-skia';
-import { format } from 'date-fns';
+import { format, formatDate } from 'date-fns';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { View, TextInput, Text, ActivityIndicator } from 'react-native';
@@ -11,17 +11,10 @@ import { TempPluvData } from '~/types/resquestTempPluv';
 
 
 
-const DATA = [
+/*const DATA = [
   { day: new Date('2024-08-10').getTime(), rainfall: 50 },
   { day: new Date('2024-08-11').getTime(), rainfall: 30 },
-  { day: new Date('2024-08-12').getTime(), rainfall: 60 },
-  { day: new Date('2024-08-13').getTime(), rainfall: 20 },
-  { day: new Date('2024-08-14').getTime(), rainfall: 80 },
-  { day: new Date('2024-08-16').getTime(), rainfall: 10 },
-  { day: new Date('2024-08-17').getTime(), rainfall: 15 },
-  { day: new Date('2024-08-18').getTime(), rainfall: 20 },
-  { day: new Date('2024-08-19').getTime(), rainfall: 85 },
-];
+];*/
 
 interface DataPoint {
   day: number; // Timestamp do dia
@@ -64,23 +57,22 @@ const GraphicRainfall: React.FC<Props> = ({ route }) => {
   useEffect(() => {
     (async () => {
       try {
-        const fetchedData: TempPluvData = await fetchPluviTemp({
+        const data: TempPluvData = await fetchPluviTemp({
           latitude: params.latNumber,
           longitude: params.longNumber,
           startDate: params.startDateNumber,
           endDate: params.endDateNumber,
         });
 
-        setDataPluvTemp(fetchedData);
+        setDataPluvTemp(data);
 
-        const formattedData = fetchedData.data.map(item => ({
+        const formattedData = dataPluvTemp.data.map(item => ({
           day: new Date(item.day).getTime(),
           rainfall: item.precipitation,
-        }));   
+        }));
 
         setData(formattedData)
-        console.log(fetchedData);
-        ;
+
       } catch (error) {
         setError('Erro ao carregar os dados');
       } finally {
@@ -92,28 +84,21 @@ const GraphicRainfall: React.FC<Props> = ({ route }) => {
 
 
   const animatedText = useAnimatedProps(() => {
+    const value = state?.y?.rainfall?.value?.value || 0;
     return {
-      text: `${state.y.rainfall.value.value.toFixed(2)} mm`,
+      text: `${value.toFixed(2)} mm`,  // Certifique-se de que o valor é uma string
       defaultValue: '',
     };
   });
 
   const animatedDateText = useAnimatedProps(() => {
-    const date = new Date(state.x.value.value);
+    const dateValue = state?.x?.value?.value || Date.now();  // Verifica se o valor de data existe, caso contrário, usa a data atual
+    const date = new Date(dateValue);
     return {
       text: `${date.toLocaleDateString('pt-BR')}`,
       defaultValue: '',
     };
   });
-
-  if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  }
-
-  if (error) {
-    return <Text>{error}</Text>;
-  }
-
 
   return (
     <View>
@@ -125,6 +110,7 @@ const GraphicRainfall: React.FC<Props> = ({ route }) => {
               underlineColorAndroid="transparent"
               style={{ fontSize: 25, fontWeight: 'bold', color: '#000' }}
               animatedProps={animatedText}
+              
             />
 
             <AnimatedTextImput
@@ -134,34 +120,44 @@ const GraphicRainfall: React.FC<Props> = ({ route }) => {
             />
           </View>
         )}
-        {!isActive && (
+        {!isActive && data.length > 0 ? (
           <View>
             <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#000' }}>
-              {data[data.length - 1].rainfall.toFixed(2)}mm
+              {`${data[data.length - 1]?.rainfall?.toFixed(2) || '0'} mm`} {/* Convertendo para string */}
             </Text>
-            <Text>Hoje</Text>
           </View>
+        ) : (
+          <Text style={{ fontSize: 18, color: '#000' }}>
+            Nenhum dado disponível
+          </Text>
         )}
-        <CartesianChart
-          data={data}
-          xKey="day"
-          yKeys={['rainfall']}
-          chartPressState={state}
-          axisOptions={{
-            tickCount: 10,
-            labelOffset: { x: 3, y: 2 },
-            labelPosition: 'outset',
-            font,
-            formatYLabel: (value) => `${value}`,
-            formatXLabel: (value) => format(new Date(), 'MM/yy'),
-          }}>
-          {({ points }) => (
-            <>
-              <Line points={points.rainfall} color="blue" strokeWidth={3} />
-              {isActive && <ToolTip x={state.x.position} y={state.y.rainfall.position} />}
-            </>
-          )}
-        </CartesianChart>
+        {dataPluvTemp.data.map((item, index)=> {
+          return( 
+          <CartesianChart
+            data={data.length > 0 ? data : [{ day: Date.now(), rainfall: 0 }]}  // Garante que sempre haja dados válidos
+            xKey={item.day}
+            yKeys={item.precipitation}
+            chartPressState={state}
+            axisOptions={{
+              labelOffset: { x: 3, y: 2 },
+              labelPosition: 'outset',
+              font,
+              formatYLabel: (value) => `${value}`,
+              formatXLabel: (value) => {
+                const dateValue = isNaN(value) ? Date.now() : value; // Use um valor padrão se value não for válido
+                return format(new Date(dateValue), 'MM/yy');
+              }}}>
+            {({ points }) => (
+              <>
+                <Line points={points.rainfall || []} color="blue" strokeWidth={3} />  // Garante que points.rainfall não seja undefined
+                {isActive && points.rainfall && points.rainfall.length > 0 && (
+                  <ToolTip x={state.x.position} y={state.y.rainfall.position} />
+                )}
+              </>
+            )}
+          </CartesianChart>)
+        })}
+        
       </View>
     </View>
   );

@@ -1,14 +1,15 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, Dimensions } from 'react-native';
 
 interface HeaderProps {
   title?: string;
 }
+const { width } = Dimensions.get('window');
+
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
   return (
     <View style={styles.header}>
-      <View style={styles.line} />
       <View style={styles.title}>
         <Text style={styles.textTitle}>{title}</Text>
       </View>
@@ -18,28 +19,27 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: 'rgba(255, 255, 255, 1)',
-    height: 80,
+    backgroundColor: 'rgba(0, 73, 11, 1)',
+    width: width * 0.60,                 // Full width
+    height: 60,                    // Set height as needed
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-  },
-  line: {
-    backgroundColor: 'rgba(147, 147, 147, 1)',
-    width: '100%',
-    height: 0,
+    top: 30,
+    left: 20,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',    
+    flexDirection: 'row',
+    zIndex:100   
   },
   title: {
     width: '100%',
-    paddingTop: 20
+    alignItems: 'center',   
   },
   textTitle: {
     fontSize: 20,
     fontWeight: '700',
-    alignSelf: 'flex-start',
-    paddingLeft: 20,
-    paddingTop: 25,
+    color: 'white',
+    textAlign: 'center',                 // Make text color white for contrast
   },
 });
 

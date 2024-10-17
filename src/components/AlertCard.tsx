@@ -10,7 +10,7 @@ const AlertCard: React.FC<AlertCardParams> = ({ }) => {
     return (
 
         <View>
-            <Text>Lala</Text>
+            <Text>Teste</Text>
         </View>
 
     )

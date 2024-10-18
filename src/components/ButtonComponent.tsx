@@ -43,17 +43,16 @@ ButtonComponent.defaultProps = {
 const styles = StyleSheet.create({
   container: {},
   button: {
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 73, 11, 1)',
+    borderRadius: 10,
+    backgroundColor: '#F1F3F0',
     alignItems: 'center',
     justifyContent: 'center',
     paddingLeft: 15,
     paddingRight: 15,
   },
   buttonText: {
-    color: 'rgba(255, 255, 255, 1)',
+    color: 'rgba(0, 0, 0, 1)',
   },
 });
 
 export default ButtonComponent;
-

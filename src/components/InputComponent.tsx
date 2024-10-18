@@ -37,7 +37,6 @@ const InputComponent: React.FC<InputComponentProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <Text style={[styles.label, { fontSize, fontWeight }]}>{label}</Text>
       <TextInput
         style={[
           styles.input,
@@ -50,7 +49,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
         ]}
         keyboardType="numeric"
         placeholder={placeHolder}
-        placeholderTextColor="rgba(255, 255, 255, 0.8)"
+        placeholderTextColor="rgba(0, 0, 0, 0.6)"
         value={value}
         onChangeText={onChangeText}
         maxLength={maxLength}
@@ -85,8 +84,8 @@ const styles = StyleSheet.create({
   },
   input: {
     borderRadius: 10,
-    backgroundColor: 'rgba(0, 73, 11, 1)',
-    color: 'rgba(255, 255, 255, 1)',
+    backgroundColor: '#F1F3F0',
+    color: '#000',
     paddingLeft: 11,
     alignSelf: 'center',
   },
@@ -99,4 +98,3 @@ const styles = StyleSheet.create({
 });
 
 export default InputComponent;
-

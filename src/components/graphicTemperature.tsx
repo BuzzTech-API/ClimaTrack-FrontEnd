@@ -97,7 +97,7 @@ const GraphicTemperature: React.FC<Props> = ({ dataPluvTemp }) => {
         {!isActive && (
           <View>
             <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#000' }}>
-              {data[data.length - 1].temperature.toFixed(2)}°C
+              {data.length > 0 &&data[data.length - 1].temperature.toFixed(2)}°C
             </Text>
           </View>
         )}

@@ -34,11 +34,7 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
   const params = route.params;
   const [startDate, setStartDate] = React.useState<string>(''); // Para a data de início
   const [endDate, setEndDate] = React.useState<string>(''); // Para a data de fim
-  const [dataPluvTemp, setdataPluvTemp] = React.useState<TempPluvData>({
-    message: '',
-    status: '',
-    data: [],
-  });
+  const [dataPluvTemp, setdataPluvTemp] = React.useState<TempPluvData>();
 
   const lat = '';
   const long = '';
@@ -72,22 +68,8 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
         <View style={{ height: 800 }}>
           {dataPluvTemp !== undefined && <GraphicRainfall dataPluvTemp={dataPluvTemp.data} />}
           {dataPluvTemp !== undefined && <GraphicTemperature dataPluvTemp={dataPluvTemp.data} />}
-          <ScrollView style={styles.itensShow} />
         </View>
 
-        <View style={{ height: 400 }}>
-          <ScrollView style={styles.itensShow}>
-            {dataPluvTemp.data.map((item, index) => {
-              return (
-                <View key={index} style={styles.item}>
-                  <Text>Dia: {item.day}</Text>
-                  <Text>Temperatura: {item.temperature}</Text>
-                  <Text>Preciptação: {item.precipitation}</Text>
-                </View>
-              );
-            })}
-          </ScrollView>
-        </View>
         {/* Contêiner para os campos de data lado a lado */}
         <View style={styles.dateContainer}>
           <InputComponent

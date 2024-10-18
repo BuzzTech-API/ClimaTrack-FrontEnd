@@ -1,3 +1,4 @@
+import Feather from '@expo/vector-icons/Feather';
 import React from 'react';
 import { View, StyleSheet, Text, Dimensions, StatusBar } from 'react-native';
 
@@ -9,10 +10,11 @@ const { width } = Dimensions.get('window');
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
   return (
-    
+
     <View style={styles.header}>
-       <StatusBar barStyle="light-content" backgroundColor="black" />
+      <StatusBar barStyle="light-content" backgroundColor="black" />
       <View style={styles.title}>
+        <Feather name="search" size={20} color="black" />
         <Text style={styles.textTitle}>{title}</Text>
       </View>
     </View>
@@ -24,9 +26,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(220, 220, 220, 0)',
     height: 90,
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+    alignSelf: 'center',
+    top: 40,
   },
   line: {
     //backgroundColor: 'rgba(147, 147, 147, 1)',
@@ -34,19 +35,16 @@ const styles = StyleSheet.create({
     height: 25,
   },
   title: {
-    width: '65%',
-    height: 65,
-    borderBottomRightRadius: 40,
-    backgroundColor: 'rgba(147, 147, 147, 1)',
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignContent: 'center',
   },
   textTitle: {
     fontSize: 25,
     fontWeight: '700',
-    alignSelf: 'flex-start',
-    paddingLeft: 50,
-    paddingTop: 15,
+    paddingLeft: 20,
   },
 });
 
 export default Header;
-

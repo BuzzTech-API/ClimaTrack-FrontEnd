@@ -92,7 +92,7 @@ const GraphicRainfall: React.FC<Props> = ({ dataPluvTemp }) => {
         {!isActive && (
           <View>
             <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#000' }}>
-              {data[0].rainfall.toFixed(2)}mm
+              {data.length > 0 &&data[0].rainfall.toFixed(2)}mm
             </Text>
           </View>
         )}

@@ -3,6 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import GraphicRainfall from '~/components/graphicRainfall';
+import GraphicTemperature from '~/components/graphicTemperature';
+import LineChart from '~/components/TesteGrafico';
 
 import ResultScreen from '~/screens/ResultScreen';
 import SearchLocation from '~/screens/SearchLocation';

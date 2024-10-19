@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Toast from 'react-native-toast-message';
 
 import ResultScreen from '~/screens/ResultScreen';
 import SearchLocation from '~/screens/SearchLocation';
@@ -18,6 +19,7 @@ export default function App() {
           <Stack.Screen name="result" component={ResultScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
+      <Toast />
     </GestureHandlerRootView>
   );
 }

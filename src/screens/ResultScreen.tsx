@@ -1,7 +1,8 @@
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
+import { View, StyleSheet, Text, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import Toast from 'react-native-toast-message';
 
 import { fetchPluviTemp } from '~/api/getPluvTemp';
 import ButtonComponent from '~/components/ButtonComponent';
@@ -36,6 +37,9 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
   const [endDate, setEndDate] = React.useState<string>(''); // Para a data de fim
   const [dataPluvTemp, setdataPluvTemp] = React.useState<TempPluvData>();
 
+  const [loading, setLoading] = React.useState<boolean>(false); // Novo estado de carregamento
+  const [error, setError] = React.useState<string | null>(null);
+
   const lat = '';
   const long = '';
 
@@ -44,19 +48,46 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
   };
 
   useEffect(() => {
-    (async () => {
-      const data: TempPluvData = await fetchPluviTemp({
-        latitude: params.latNumber,
-        longitude: params.longNumber,
-        startDate: params.startDateNumber,
-        endDate: params.endDateNumber,
-      });
-      setdataPluvTemp(data);
-    })();
+    const fetchData = async () => {
+      setLoading(true); // Inicia o estado de carregamento
+      setError(null); // Reseta o estado de erro antes de cada fetch
+
+      try {
+        const data: TempPluvData = await fetchPluviTemp({
+          latitude: params.latNumber,
+          longitude: params.longNumber,
+          startDate: params.startDateNumber,
+          endDate: params.endDateNumber,
+        });
+        setdataPluvTemp(data);
+        Toast.show({
+          type: 'success',
+          text1: 'Sucesso!',
+          text2: 'Os dados climáticos foram carregados com sucesso.',
+        })
+      } catch (err) {
+        if (err instanceof Error){
+          setError(err.message)
+        }
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao buscar dados.',
+          text2: 'Não foi possível carregar os dados climáticos.',
+        })
+      } finally {
+        setLoading(false); // Finaliza o estado de carregamento
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
     <KeyboardAvoidingView style={styles.container}>
+      {/* Feedback de carregamento */}
+      {loading && (
+          <ActivityIndicator size="large" color="#0000ff" style={styles.loadingContainer}/>
+      )}
       <Header title="Resultado da pesquisa" />
       <View style={styles.bodyContainer}>
         {/* Exibindo Latitude e Longitude */}
@@ -66,6 +97,7 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
         </View>
 
         <View style={{ height: 800 }}>
+        
           {dataPluvTemp !== undefined && <GraphicRainfall dataPluvTemp={dataPluvTemp.data} />}
           {dataPluvTemp !== undefined && <GraphicTemperature dataPluvTemp={dataPluvTemp.data} />}
         </View>
@@ -154,6 +186,15 @@ const styles = StyleSheet.create({
   item: {
     marginTop: 20,
     marginBottom: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute', // Para ficar por cima de tudo
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
   },
 });
 

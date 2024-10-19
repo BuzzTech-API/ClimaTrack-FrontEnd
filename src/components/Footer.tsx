@@ -4,23 +4,30 @@ import React from 'react';
 import { View, StyleSheet, Text, Button, TouchableHighlight } from 'react-native';
 
 import ButtonWithIcon from './ButtonWithIcon';
-const Footer = () => {
+type props = {
+  navigation: any;
+};
+const Footer = ({ navigation }: props) => {
   return (
     <View style={styles.footer}>
       <ButtonWithIcon
         title="Pesquisar"
-        width={50}
+        width={150}
         height={60}
-        onPress={() => { }}
+        onPress={() => {
+          navigation.navigate('search');
+        }}
         icon={<Feather name="search" size={24} color="black" />}
         activeBackgroudColor="#F1F3F0"
         backgroundColor="#FFF"
       />
       <ButtonWithIcon
         title="Meus Locais"
-        width={50}
+        width={150}
         height={60}
-        onPress={() => { }}
+        onPress={() => {
+          console.log('pressed');
+        }}
         icon={<Entypo name="location-pin" size={24} color="black" />}
         activeBackgroudColor="#F1F3F0"
         backgroundColor="#FFF"

@@ -11,6 +11,10 @@ type Props = {
   color?: string;
   backgroundColor?: string;
   activeBackgroudColor?: string;
+  mt?: number;
+  mb?: number;
+  p?: number;
+  borderRadius?: number;
 };
 
 export default function ButtonWithIcon({
@@ -21,20 +25,24 @@ export default function ButtonWithIcon({
   height,
   backgroundColor = '#F1F3F0',
   activeBackgroudColor,
+  mt,
+  mb,
+  p,
+  borderRadius = 5,
   color = '#000',
 }: Props) {
   const styles = StyleSheet.create({
     btnClickContain: {
-      flex: 1,
+      display: 'flex',
       flexDirection: 'row',
       justifyContent: 'center',
       backgroundColor,
-      borderRadius: 5,
+      borderRadius,
       width,
       height,
-      padding: 5,
-      marginTop: 5,
-      marginBottom: 5,
+      padding: p,
+      marginTop: mt,
+      marginBottom: mb,
     },
     btnContainer: {
       flex: 1,
@@ -62,7 +70,7 @@ export default function ButtonWithIcon({
       onPress={onPress}>
       <View style={styles.btnContainer}>
         {icon}
-        <Text style={styles.btnText}>{title}</Text>
+        {title.length > 0 && <Text style={styles.btnText}>{title}</Text>}
       </View>
     </TouchableHighlight>
   );

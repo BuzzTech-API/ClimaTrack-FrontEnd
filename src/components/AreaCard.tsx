@@ -26,20 +26,20 @@ const AreaCard: React.FC<AreaCardProps> = ({
     <TouchableOpacity style={styles.container}>
         <View style={styles.card}>
             <View style={styles.info}>
-                <Text style={styles.name}> {areaName} </Text>
+                <Text style={styles.name}>{areaName}</Text>
                 <View style={styles.stats}>
-                    <Text style={styles.statsText}> {temperatureValue}C </Text>
-                    <Text style={styles.statsText}> {humidityValue}mm </Text>
+                    <Text style={styles.statsText}>{temperatureValue}C</Text>
+                    <Text style={styles.statsText}>{humidityValue}mm</Text>
                 </View>
                 <View style={styles.coordenates}>
-                    <Text style={styles.coordenatesText}> Lat: {latValue} </Text>
-                    <Text style={styles.coordenatesText}> Long: {longValue} </Text>
+                    <Text style={styles.coordenatesText}> Lat:{latValue}</Text>
+                    <Text style={styles.coordenatesText}> Long:{longValue}</Text>
                 </View>
             </View>
             <View style={styles.alert}>
-                <Text style={styles.number}> {alertNumber} Alertas! </Text>
-                <Text style={styles.warning}> {alertWarning1} </Text>
-                <Text style={styles.warning}> {alertWarning2} </Text>
+            <Text style={styles.number}>{alertNumber ?? 0} Alertas!</Text>
+                {alertWarning1 ? <Text style={styles.warning}>{alertWarning1}</Text> : null}
+                {alertWarning2 ? <Text style={styles.warning}>{alertWarning2}</Text> : null}
             </View>
         </View>
     </TouchableOpacity>

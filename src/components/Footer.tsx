@@ -26,7 +26,7 @@ const Footer = ({ navigation }: props) => {
         width={150}
         height={60}
         onPress={() => {
-          console.log('pressed');
+          navigation.navigate('areas');
         }}
         icon={<Entypo name="location-pin" size={24} color="black" />}
         activeBackgroudColor="#F1F3F0"
@@ -51,8 +51,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    borderTopLeftRadius: 35,
-    borderTopRightRadius: 35,
   },
   button: {
     width: 170,

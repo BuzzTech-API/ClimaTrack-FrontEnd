@@ -1,3 +1,4 @@
+import Feather from '@expo/vector-icons/Feather';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert, KeyboardAvoidingView, ScrollView } from 'react-native';
@@ -279,7 +280,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ navigation }) => {
   return (
     <KeyboardAvoidingView style={styles.container}>
       {/*<View style={styles.headerContainer}>*/}
-      <Header title="Pesquisar Local" />
+      <Header title="Pesquisar Local" icon={<Feather name="search" size={20} color="black" />} />
       <ScrollView style={styles.bodyContainer}>
         <View style={styles.mapContainer}>
           <MapView
@@ -339,7 +340,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ navigation }) => {
           <ButtonComponent buttonText="Pesquisar" onPress={handleSearch} />
         </View>
       </ScrollView>
-      <Footer navigation={navigation}/>
+      <Footer navigation={navigation} />
     </KeyboardAvoidingView>
   );
 };
@@ -357,7 +358,7 @@ const styles = StyleSheet.create({
   bodyContainer: {
     flexGrow: 1,
     width: '100%',
-    marginTop: 100,
+    marginTop: 80,
     marginBottom: 80,
   },
   coordenateContainer: {

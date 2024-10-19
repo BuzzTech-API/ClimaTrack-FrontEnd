@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { View, StyleSheet, Text, KeyboardAvoidingView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
+import { addLocation } from '~/api/addLocation';
 
 import { fetchPluviTemp } from '~/api/getPluvTemp';
 import ButtonComponent from '~/components/ButtonComponent';
@@ -42,15 +43,39 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
   const [loading, setLoading] = React.useState<boolean>(false); // Novo estado de carregamento
   const [error, setError] = React.useState<string | null>(null);
 
-  const handleSave = () => {
-    // Lógica para salvar os dados
-    Toast.show({
-      type: 'success',
-      text1: 'Salvo!',
-      text2: 'Os dados foram salvos com sucesso.',
-    });
+  const handleSave = async () => {
+    try {
+      // Dados que você deseja salvar
+      const locationData = {
+        nome: `Local ${params.latNumber.toFixed(5)}, ${params.longNumber.toFixed(5)}`, 
+        latitude: params.latNumber,
+        longitude: params.longNumber,
+      };
+  
+      const response = await addLocation(locationData);
+  
+      if (response.sucesss) {
+        Toast.show({
+          type: 'success',
+          text1: 'Salvo!',
+          text2: response.message,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao salvar!',
+          text2: `Status: ${response.status}`,
+        });
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao salvar!',
+      });
+    }
   };
-
+  
+  
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true); // Inicia o estado de carregamento

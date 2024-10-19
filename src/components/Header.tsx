@@ -1,14 +1,17 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, Dimensions, StatusBar } from 'react-native';
 
 interface HeaderProps {
   title?: string;
 }
 
+const { width } = Dimensions.get('window');
+
 const Header: React.FC<HeaderProps> = ({ title }) => {
   return (
+    
     <View style={styles.header}>
-      <View style={styles.line} />
+       <StatusBar barStyle="light-content" backgroundColor="black" />
       <View style={styles.title}>
         <Text style={styles.textTitle}>{title}</Text>
       </View>

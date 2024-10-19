@@ -339,7 +339,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ navigation }) => {
           <ButtonComponent buttonText="Pesquisar" onPress={handleSearch} />
         </View>
       </ScrollView>
-      <Footer />
+      <Footer navigation={navigation}/>
     </KeyboardAvoidingView>
   );
 };

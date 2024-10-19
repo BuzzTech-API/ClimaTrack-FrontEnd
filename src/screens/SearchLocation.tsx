@@ -341,7 +341,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ navigation }) => {
           <ButtonComponent buttonText="Pesquisar" onPress={handleSearch} />
         </View>
       </ScrollView>
-      <Footer />
+      <Footer navigation={navigation}/>
     </KeyboardAvoidingView>
   );
 };
@@ -359,8 +359,8 @@ const styles = StyleSheet.create({
   bodyContainer: {
     flexGrow: 1,
     width: '100%',
-    marginTop: 85,
-    marginBottom: 75,
+    marginTop: 100,
+    marginBottom: 80,
   },
   coordenateContainer: {
     flexDirection: 'row',

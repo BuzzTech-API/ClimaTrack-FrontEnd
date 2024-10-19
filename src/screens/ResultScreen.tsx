@@ -9,6 +9,7 @@ import Footer from '~/components/Footer';
 import Header from '~/components/Header';
 import InputComponent from '~/components/InputComponent';
 import GraphicRainfall from '~/components/graphicRainfall';
+import GraphicTemperature from '~/components/graphicTemperature';
 import { TempPluvData } from '~/types/resquestTempPluv';
 
 type ParamList = {
@@ -66,6 +67,12 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
         <View style={styles.coordinatesContainer}>
           <Text style={styles.coordinateText}>Latitude: {lat}</Text>
           <Text style={styles.coordinateText}>Longitude: {long}</Text>
+        </View>
+
+        <View style={{ height: 800 }}>
+          {dataPluvTemp !== undefined && <GraphicRainfall dataPluvTemp={dataPluvTemp.data} />}
+          {dataPluvTemp !== undefined && <GraphicTemperature dataPluvTemp={dataPluvTemp.data} />}
+          <ScrollView style={styles.itensShow} />
         </View>
 
         <View style={{ height: 400 }}>

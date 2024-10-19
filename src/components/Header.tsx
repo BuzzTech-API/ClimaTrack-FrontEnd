@@ -21,27 +21,30 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: 'rgba(0, 73, 11, 1)',
-    width: width * (2 / 3),              // Set width to two-thirds of the screen
-    height: 60,                           // Keep height as 60
+    backgroundColor: 'rgba(220, 220, 220, 0)',
+    height: 90,
     position: 'absolute',
-    top: 0,                               // Move to the top of the screen
-    left: 0,                              // Start from the left edge
-    borderBottomRightRadius: 50,          // Rounded bottom-right corner
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    zIndex: 100,
+    top: 0,
+    left: 0,
+    right: 0,
+  },
+  line: {
+    //backgroundColor: 'rgba(147, 147, 147, 1)',
+    width: '100%',
+    height: 25,
   },
   title: {
-    width: '100%',
-    alignItems: 'center',
+    width: '65%',
+    height: 65,
+    borderBottomRightRadius: 40,
+    backgroundColor: 'rgba(147, 147, 147, 1)',
   },
   textTitle: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: '700',
-    color: 'white',
-    textAlign: 'center',
+    alignSelf: 'flex-start',
+    paddingLeft: 50,
+    paddingTop: 15,
   },
 });
 

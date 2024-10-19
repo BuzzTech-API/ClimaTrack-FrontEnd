@@ -1,25 +1,22 @@
+import { StackScreenProps } from '@react-navigation/stack';
 import { Circle, useFont } from '@shopify/react-native-skia';
 import { format } from 'date-fns';
+import React from 'react';
 import { useEffect, useState } from 'react';
-import { View, TextInput, Text } from 'react-native';
+import { View, TextInput, Text, ActivityIndicator } from 'react-native';
 import Animated, { SharedValue, useAnimatedProps } from 'react-native-reanimated';
 import { CartesianChart, Line, useChartPressState } from 'victory-native';
+import { fetchPluviTemp } from '~/api/getPluvTemp';
+import { TempPluvData } from '~/types/resquestTempPluv';
 
-const DATA = [
-  { day: new Date('2024-08-10').getTime(), temperature: 30 },
-  { day: new Date('2024-08-11').getTime(), temperature: 27 },
-  { day: new Date('2024-08-12').getTime(), temperature: 26 },
-  { day: new Date('2024-08-13').getTime(), temperature: 39 },
-  { day: new Date('2024-08-14').getTime(), temperature: 30 },
-  { day: new Date('2024-08-16').getTime(), temperature: 28 },
-  { day: new Date('2024-08-17').getTime(), temperature: 25 },
-  { day: new Date('2024-08-18').getTime(), temperature: 29 },
-  { day: new Date('2024-08-19').getTime(), temperature: 35 },
-];
 
-interface DataPoint {
-  day: number; // Timestamp do dia
-  temperature: number; // Temperatura registrada
+
+function converterStringParaData(dataStr: string): Date {
+  const ano = parseInt(dataStr.substring(0, 4), 10);
+  const mes = parseInt(dataStr.substring(4, 6), 10) - 1; // O mês começa do 0 em JavaScript/TypeScript
+  const dia = parseInt(dataStr.substring(6, 8), 10);
+
+  return new Date(ano, mes, dia);
 }
 
 Animated.addWhitelistedNativeProps({ text: true });
@@ -29,37 +26,23 @@ function ToolTip({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) {
   return <Circle cx={x} cy={y} r={8} color="black" />;
 }
 
-function GraphicTemperature() {
+type Props = {
+  dataPluvTemp: {
+    day: string;
+    temperature: number;
+    precipitation: number;
+  }[];
+};
+
+const GraphicTemperature: React.FC<Props> = ({ dataPluvTemp }) => {
   const { state, isActive } = useChartPressState({ x: 0, y: { temperature: 0 } });
   const font = useFont(require('src/fonts/Inter_24pt-Regular.ttf'));
-  const [data, setData] = useState<DataPoint[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  /* Requisição para a API
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(''); 
-        const result = await response.json();
-        // Supondo que a API retorna um array de objetos com campos "day" e "rainfall"
-        const formattedData = Array.isArray(result) ? result.map(item => ({
-          day: new Date(item.day).getTime(),
-          temperature: item.temperature,
-        })) : [];
-        setData(formattedData);
-      } catch (error) {
-        setError(error instanceof Error ? error.message : 'Erro ao carregar os dados');
-      } finally {
-        setLoading(false);
-      }
-    }
-      
 
-    fetchData();
-}, []);
-
-*/
+  const data = dataPluvTemp.map((item, index) => ({
+    day: converterStringParaData(item.day).getTime(),
+    temperature: item.temperature,
+  }));
 
   const animatedText = useAnimatedProps(() => {
     return {
@@ -76,14 +59,21 @@ function GraphicTemperature() {
     };
   });
 
-  /* if (loading) {
-   return <ActivityIndicator size="large" color="#0000ff" />;
- }
+  const formatXLabel = (() => {
+    let lastMonth: string | null = null; // Armazena o último mês exibido
 
- if (error) {
-   return <Text>{error}</Text>;
- }
-   */
+    return (value: string | number | Date) => {
+      const date = new Date(value);
+      const currentMonth = format(date, 'MMM');
+
+      if (currentMonth !== lastMonth) {
+        lastMonth = currentMonth;
+        return currentMonth; // Retorna o mês atual se houver mudança
+      }
+
+      return ''; // Caso contrário, retorna string vazia
+    };
+  })();
 
   return (
     <View>
@@ -107,13 +97,12 @@ function GraphicTemperature() {
         {!isActive && (
           <View>
             <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#000' }}>
-              {DATA[DATA.length - 1].temperature.toFixed(2)}°C
+              {data.length > 0 &&data[data.length - 1].temperature.toFixed(2)}°C
             </Text>
-            <Text>Hoje</Text>
           </View>
         )}
         <CartesianChart
-          data={DATA}
+          data={data}
           xKey="day"
           yKeys={['temperature']}
           chartPressState={state}
@@ -123,11 +112,11 @@ function GraphicTemperature() {
             labelPosition: 'outset',
             font,
             formatYLabel: (value) => `${value}`,
-            formatXLabel: (value) => format(new Date(), 'MM/yy'),
+            formatXLabel,
           }}>
           {({ points }) => (
             <>
-              <Line points={points.temperature} color="blue" strokeWidth={3} />
+              <Line points={points.temperature} color="red" strokeWidth={3} />
               {isActive && <ToolTip x={state.x.position} y={state.y.temperature.position} />}
             </>
           )}

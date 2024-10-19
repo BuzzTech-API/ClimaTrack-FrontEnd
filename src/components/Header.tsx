@@ -1,15 +1,18 @@
-import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React, { ReactElement } from 'react';
+import { View, StyleSheet, Text, Dimensions, StatusBar } from 'react-native';
 
 interface HeaderProps {
   title?: string;
+  icon?: ReactElement<any, any>;
 }
 
-const Header: React.FC<HeaderProps> = ({ title }) => {
+const { width } = Dimensions.get('window');
+
+const Header: React.FC<HeaderProps> = ({ title, icon }) => {
   return (
     <View style={styles.header}>
-      <View style={styles.line} />
       <View style={styles.title}>
+        {icon}
         <Text style={styles.textTitle}>{title}</Text>
       </View>
     </View>
@@ -18,29 +21,23 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: 'rgba(255, 255, 255, 1)',
+    backgroundColor: 'rgba(220, 220, 220, 0)',
     height: 80,
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-  },
-  line: {
-    backgroundColor: 'rgba(147, 147, 147, 1)',
-    width: '100%',
-    height: 25,
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
   title: {
     width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignContent: 'center',
   },
   textTitle: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: '700',
-    alignSelf: 'flex-start',
     paddingLeft: 20,
-    paddingTop: 25,
   },
 });
 
 export default Header;
-

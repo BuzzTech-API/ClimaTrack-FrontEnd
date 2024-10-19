@@ -1,3 +1,4 @@
+import Feather from '@expo/vector-icons/Feather';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert, KeyboardAvoidingView, ScrollView } from 'react-native';
@@ -57,37 +58,37 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ navigation }) => {
   let endBissexto: boolean;
 
   const validateDate = (date: string) => {
-    if (date == startDate) {
-      if (parseInt(date[4] + date[5]) > 12) {
+    if (date === startDate) {
+      if (parseInt(date[4] + date[5], 10) > 12) {
         startDay = date[0] + date[1];
         startMonth = date[2] + date[3];
         startYear = date[4] + date[5] + date[6] + date[7];
 
-        return parseInt(startYear + startMonth + startDay);
+        return parseInt(startYear + startMonth + startDay, 10);
       }
-      if (parseInt(date[4] + date[5]) <= 12) {
+      if (parseInt(date[4] + date[5], 10) <= 12) {
         startDay = date[6] + date[7];
         startMonth = date[4] + date[5];
         startYear = date[0] + date[1] + date[2] + date[3];
 
-        return parseInt(startYear + startMonth + startDay);
+        return parseInt(startYear + startMonth + startDay, 10);
       }
     }
 
-    if (date == endDate) {
-      if (parseInt(date[4] + date[5]) > 12) {
+    if (date === endDate) {
+      if (parseInt(date[4] + date[5], 10) > 12) {
         endDay = date[0] + date[1];
         endMonth = date[2] + date[3];
         endYear = date[4] + date[5] + date[6] + date[7];
 
-        return parseInt(endYear + endMonth + endDay);
+        return parseInt(endYear + endMonth + endDay, 10);
       }
-      if (parseInt(date[4] + date[5]) <= 12) {
+      if (parseInt(date[4] + date[5], 10) <= 12) {
         endDay = date[6] + date[7];
         endMonth = date[4] + date[5];
         endYear = date[0] + date[1] + date[2] + date[3];
 
-        return parseInt(endYear + endMonth + endDay);
+        return parseInt(endYear + endMonth + endDay, 10);
       }
     }
   };
@@ -279,7 +280,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ navigation }) => {
   return (
     <KeyboardAvoidingView style={styles.container}>
       {/*<View style={styles.headerContainer}>*/}
-      <Header title="Pesquisar Local" />
+      <Header title="Pesquisar Local" icon={<Feather name="search" size={20} color="black" />} />
       <ScrollView style={styles.bodyContainer}>
         <View style={styles.mapContainer}>
           <MapView
@@ -300,7 +301,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ navigation }) => {
           <InputComponent
             label="Latitude"
             placeHolder="Digite a latitude"
-            inputWidth={115}
+            inputWidth={315}
             value={lat}
             onChangeText={setLat}
             maxLength={10}
@@ -309,19 +310,17 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ navigation }) => {
           <InputComponent
             label="Longitude"
             placeHolder="Digite a longitude"
-            inputWidth={115}
+            inputWidth={315}
             value={long}
             onChangeText={setLong}
             maxLength={10}
             warning={longError}
           />
-        </View>
 
-        <View style={styles.dateContainer}>
           <InputComponent
             label="Data de Início"
-            placeHolder="Dia/Mês/Ano"
-            inputWidth={115}
+            placeHolder="Data de Início"
+            inputWidth={315}
             value={startDate}
             onChangeText={setStartDate}
             maxLength={8}
@@ -329,8 +328,8 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ navigation }) => {
           />
           <InputComponent
             label="Data de Fim"
-            placeHolder="Dia/Mês/Ano"
-            inputWidth={115}
+            placeHolder="Data de Fim"
+            inputWidth={315}
             value={endDate}
             onChangeText={setEndDate}
             maxLength={8}
@@ -341,7 +340,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ navigation }) => {
           <ButtonComponent buttonText="Pesquisar" onPress={handleSearch} />
         </View>
       </ScrollView>
-      <Footer />
+      <Footer navigation={navigation} />
     </KeyboardAvoidingView>
   );
 };
@@ -359,23 +358,17 @@ const styles = StyleSheet.create({
   bodyContainer: {
     flexGrow: 1,
     width: '100%',
-    marginTop: 85,
-    marginBottom: 75,
+    marginTop: 80,
+    marginBottom: 80,
   },
   coordenateContainer: {
-    flexDirection: 'row',
-    gap: 40,
+    flexDirection: 'column',
+    gap: 10,
     paddingTop: '5%',
     alignSelf: 'center',
   },
-  dateContainer: {
-    alignSelf: 'center',
-    flexDirection: 'row',
-    gap: 40,
-    marginTop: 30,
-  },
   buttonContainer: {
-    marginTop: 40,
+    marginTop: 10,
     alignSelf: 'center',
   },
   footerContainer: {
@@ -386,7 +379,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     display: 'flex',
     width: '100%',
-    height: 300,
+    height: 280,
   },
 });
 

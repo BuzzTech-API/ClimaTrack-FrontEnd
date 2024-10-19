@@ -7,9 +7,10 @@ export const fetchPluviTemp = async (infosReq: reqPluvTempType) => {
 
   try {
     const response = await api.get(`/climate/${parameters}`);
-    return response.data;
+    if(response.status == 200){
+      return response.data
+    }
   } catch (error) {
-    console.error('Erro ao buscar dados climáticos:', error);
-    throw new Error('Erro ao buscar dados climáticos');
+    throw new Error("Erro ao buscar dados climáticos")
   }
 };

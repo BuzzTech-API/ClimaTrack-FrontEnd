@@ -10,6 +10,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.0.4",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "@react-navigation/stack": "^6.4.1",
@@ -27,6 +28,7 @@
     "react-native-gesture-handler": "^2.19.0",
     "react-native-maps": "1.14.0",
     "react-native-reanimated": "^3.10.1",
+    "react-native-toast-message": "^2.2.1",
     "victory-native": "^41.4.0"
   },
   "devDependencies": {

@@ -1,43 +1,56 @@
+import Entypo from '@expo/vector-icons/Entypo';
+import Feather from '@expo/vector-icons/Feather';
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { View, StyleSheet, Text, Button, TouchableHighlight } from 'react-native';
 
-const Stack = createStackNavigator();
-
-interface FooterProps {
-  title?: string;
+import ButtonWithIcon from './ButtonWithIcon';
+type props = {
   navigation: any;
-}
-
-const Footer: React.FC<FooterProps> = ({ navigation }) => {
+};
+const Footer = ({ navigation }: props) => {
   return (
     <View style={styles.footer}>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('search')}>
-        <Text style={styles.buttonText}> Pesquisar </Text>
-      </TouchableOpacity>
-      <View style={styles.line} />
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('areas')}>
-        <Text style={styles.buttonText}> Meus Locais </Text>
-      </TouchableOpacity>
+      <ButtonWithIcon
+        title="Pesquisar"
+        width={150}
+        height={60}
+        onPress={() => {
+          navigation.navigate('search');
+        }}
+        icon={<Feather name="search" size={24} color="black" />}
+        activeBackgroudColor="#F1F3F0"
+        backgroundColor="#FFF"
+      />
+      <ButtonWithIcon
+        title="Meus Locais"
+        width={150}
+        height={60}
+        onPress={() => {
+          navigation.navigate('areas');
+        }}
+        icon={<Entypo name="location-pin" size={24} color="black" />}
+        activeBackgroudColor="#F1F3F0"
+        backgroundColor="#FFF"
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   footer: {
-    backgroundColor: 'rgba(147, 147, 147, 1)',
-    height: 60,
+    backgroundColor: '#FFF',
+    height: 80,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 25,
+    justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: 'black',
+    elevation: 20,
     position: 'absolute',
+    gap: 10,
+    paddingHorizontal: 20,
     bottom: 0,
     left: 0,
     right: 0,
-    borderTopLeftRadius: 35,
-    borderTopRightRadius: 35,
   },
   button: {
     width: 170,

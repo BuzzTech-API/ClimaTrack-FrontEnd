@@ -10,6 +10,20 @@ import AreaCard from '~/components/AreaCard';
 
 // Ivan Germano: Aqui é o import do serviço que faz a requisição para a rota do backend 'find_all_locations'
 import { fetchLocations } from '~/services/locationService'; 
+import { fetchCurrentClimate } from '~/services/currentLocationService';
+
+// Definindo uma interface para a estrutura dos dados da localização
+interface Location {
+    id: string;
+    nome: string;
+    latitude: number;
+    longitude: number;
+    temperatureValue?: number;
+    humidityValue?: number;
+    alertNumber?: number;
+    alertWarning1?: string;
+    alertWarning2?: string;
+}
 
 interface MyAreasProps {
     navigation: any
@@ -17,14 +31,32 @@ interface MyAreasProps {
 
 const MyAreas: React.FC<MyAreasProps> = ({ navigation }) => {
 
-    const [locations, setLocations] = useState([]);
+    const [locations, setLocations] = useState<Location[]>([]);
 
     useEffect(() => {
         const getLocations = async () => {
             try {
                 const response = await fetchLocations();
                 console.log('Locais recebidos:', response.locations);
-                setLocations(response.locations);
+                const updatedLocations: Location[] = await Promise.all(response.locations.map(async (location: Location) => {
+                    try {
+                        const climateData = await fetchCurrentClimate(location.latitude, location.longitude);
+                        console.log('Dados climáticos recebidos:', climateData);
+                        return {
+                            ...location,
+                            temperatureValue: parseFloat(climateData["temperature_max (C°)"].toFixed(2)) ?? 0,
+                            humidityValue: parseFloat(climateData["precipitation (mm)"].toFixed(2)) ?? 0,
+                        };
+                    } catch (error) {
+                        console.error('Erro ao buscar dados climáticos:', error);
+                        return {
+                            ...location,
+                            temperatureValue: 0,
+                            humidityValue: 0,
+                        };
+                    }
+                }));
+                setLocations(updatedLocations);
             } catch (error) {
                 Alert.alert('Erro', 'Erro ao buscar localizações.');
             }
@@ -37,7 +69,7 @@ const MyAreas: React.FC<MyAreasProps> = ({ navigation }) => {
         <KeyboardAvoidingView style={styles.container}>
             <Header title="Meus Locais" />
             <ScrollView style={styles.bodyContainer}>
-                {locations.map((location: any) => {
+                {locations.map((location: Location) => {
                     console.log('Dados do AreaCard:', location);
                     return (
                         <AreaCard

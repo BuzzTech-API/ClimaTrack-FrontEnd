@@ -37,6 +37,7 @@ const AreaCard: React.FC<AreaCardProps> = ({
                 </View>
             </View>
             <View style={styles.alert}>
+            {/* Ivan Germano: Aqui eu precisei definir que caso o dado fosse 'undefined' ou 'null' ele deveria ser opcional*/}
             <Text style={styles.number}>{alertNumber ?? 0} Alertas!</Text>
                 {alertWarning1 ? <Text style={styles.warning}>{alertWarning1}</Text> : null}
                 {alertWarning2 ? <Text style={styles.warning}>{alertWarning2}</Text> : null}

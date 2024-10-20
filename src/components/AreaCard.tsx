@@ -51,8 +51,8 @@ const AreaCard: React.FC<AreaCardProps> = ({
             <Text style={styles.statsText}>{humidityValue}mm</Text>
           </View>
           <View style={styles.coordenates}>
-            <Text style={styles.coordenatesText}> Lat:{latValue}</Text>
-            <Text style={styles.coordenatesText}> Long:{longValue}</Text>
+            <Text style={styles.coordenatesText}> Lat:{latValue.toFixed(5)}</Text>
+            <Text style={styles.coordenatesText}> Long:{longValue.toFixed(5)}</Text>
           </View>
         </View>
       </View>

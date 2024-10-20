@@ -4,6 +4,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React, { useState, useEffect } from 'react';               // Ivan Germano: ActivityIndicator é uma classe do react-native que 
                                                                   // estamos usando com Toast nessa página
 import { View, StyleSheet, Alert, KeyboardAvoidingView, ScrollView, ActivityIndicator } from 'react-native';
+import Feather from '@expo/vector-icons/Feather';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+
 
 import Footer from '~/components/Footer';
 import Header from '~/components/Header';

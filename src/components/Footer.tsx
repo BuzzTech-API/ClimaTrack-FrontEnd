@@ -28,7 +28,7 @@ const Footer = ({ navigation }: props) => {
         onPress={() => {
           navigation.navigate('areas');
         }}
-        icon={<Entypo name="location-pin" size={24} color="black" />}
+        icon={<Entypo name="location-pin" size={24} color="red" />}
         activeBackgroudColor="#F1F3F0"
         backgroundColor="#FFF"
       />

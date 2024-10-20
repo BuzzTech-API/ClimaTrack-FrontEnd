@@ -1,9 +1,10 @@
 import Feather from '@expo/vector-icons/Feather';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, KeyboardAvoidingView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
+import { addLocation } from '~/api/addLocation';
 
 import { fetchPluviTemp } from '~/api/getPluvTemp';
 import ButtonComponent from '~/components/ButtonComponent';
@@ -42,10 +43,39 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
   const [loading, setLoading] = React.useState<boolean>(false); // Novo estado de carregamento
   const [error, setError] = React.useState<string | null>(null);
 
-  const handleNewSearch = () => {
-    navigation.navigate('search'); // Navega para a tela SearchLocation
+  const handleSave = async () => {
+    try {
+      // Dados que você deseja salvar
+      const locationData = {
+        nome: `Local ${params.latNumber.toFixed(5)}, ${params.longNumber.toFixed(5)}`, 
+        latitude: params.latNumber,
+        longitude: params.longNumber,
+      };
+  
+      const response = await addLocation(locationData);
+  
+      if (response.sucesss) {
+        Toast.show({
+          type: 'success',
+          text1: 'Salvo!',
+          text2: response.message,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao salvar!',
+          text2: `Status: ${response.status}`,
+        });
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao salvar!',
+      });
+    }
   };
-
+  
+  
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true); // Inicia o estado de carregamento
@@ -138,16 +168,16 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
             inputHeight={40}
           />
         </View>
-
-        {/* Contêiner para centralizar o botão */}
+        
+        {/* Botão "Salvar" adicionado */}
         <View style={styles.buttonContainer}>
-          <ButtonComponent
-            buttonText="Nova pesquisa"
-            onPress={handleNewSearch}
-            width={200}
-            height={60}
-            fontSize={18}
-          />
+          <TouchableOpacity
+            onPress={handleSave}
+            style={styles.customButton}
+          >
+            <Feather name="save" size={24} color="black" style={styles.icon} />
+            <Text style={styles.buttonText}>Salvar</Text>
+          </TouchableOpacity>
         </View>
       </View>
       <Footer navigation={navigation} />
@@ -168,6 +198,7 @@ const styles = StyleSheet.create({
   bodyContainer: {
     marginTop: '20%',
     alignItems: 'center',
+    paddingBottom: 80,
   },
   coordinatesContainer: {
     flexDirection: 'row',
@@ -190,17 +221,23 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: 'center',
-  },
-  itensShow: {
-    flexDirection: 'column',
-    width: '100%',
-    gap: 40,
-    overflow: 'scroll',
-    height: '100%',
-  },
-  item: {
-    marginTop: 20,
     marginBottom: 20,
+  },
+  customButton: {
+    backgroundColor: 'green',
+    width: 350,
+    height: 60,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 30,
+  },
+  icon: {
+    marginRight: 10, 
+  },
+  buttonText: {
+    fontSize: 18,
+    color: 'black',
   },
   loadingContainer: {
     flex: 1,

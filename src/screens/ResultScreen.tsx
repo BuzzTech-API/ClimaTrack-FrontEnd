@@ -1,19 +1,29 @@
 import Feather from '@expo/vector-icons/Feather';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, KeyboardAvoidingView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  KeyboardAvoidingView,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
-import { addLocation } from '~/api/addLocation';
 
+import { addLocation } from '~/api/addLocation';
 import { fetchPluviTemp } from '~/api/getPluvTemp';
 import ButtonComponent from '~/components/ButtonComponent';
 import ButtonWithIcon from '~/components/ButtonWithIcon';
 import Footer from '~/components/Footer';
 import Header from '~/components/Header';
 import InputComponent from '~/components/InputComponent';
+import ModalConfigGrafico from '~/components/ModalConfigGrafico';
 import GraphicRainfall from '~/components/graphicRainfall';
 import GraphicTemperature from '~/components/graphicTemperature';
+import converterDataParaString from '~/functions/converterDataParaStringFormatada';
+import converterStringParaData from '~/functions/converterStringParaData';
 import { TempPluvData } from '~/types/resquestTempPluv';
 
 type ParamList = {
@@ -36,9 +46,14 @@ interface ResultScreenProps {
 const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }) => {
   // Adicionando estados para as datas
   const params = route.params;
-  const [startDate, setStartDate] = React.useState<string>(''); // Para a data de início
-  const [endDate, setEndDate] = React.useState<string>(''); // Para a data de fim
+  const [startDate, setStartDate] = React.useState<string>(
+    converterDataParaString(converterStringParaData(params.startDateNumber.toString()))
+  ); // Para a data de início
+  const [endDate, setEndDate] = React.useState<string>(
+    converterDataParaString(converterStringParaData(params.endDateNumber.toString()))
+  ); // Para a data de fim
   const [dataPluvTemp, setdataPluvTemp] = React.useState<TempPluvData>();
+  const [nomeLocal, setNomeLocal] = React.useState('');
 
   const [loading, setLoading] = React.useState<boolean>(false); // Novo estado de carregamento
   const [error, setError] = React.useState<string | null>(null);
@@ -46,14 +61,22 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
   const handleSave = async () => {
     try {
       // Dados que você deseja salvar
+      if (nomeLocal.length === 0) {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao salvar!',
+          text2: `Nome do local não informado!`,
+        });
+        return;
+      }
       const locationData = {
-        nome: `Local ${params.latNumber.toFixed(5)}, ${params.longNumber.toFixed(5)}`, 
+        nome: nomeLocal,
         latitude: params.latNumber,
         longitude: params.longNumber,
       };
-  
+
       const response = await addLocation(locationData);
-  
+
       if (response.sucesss) {
         Toast.show({
           type: 'success',
@@ -74,8 +97,7 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
       });
     }
   };
-  
-  
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true); // Inicia o estado de carregamento
@@ -117,69 +139,55 @@ const ResultScreen: React.FC<ResultScreenProps & Props> = ({ navigation, route }
       {loading && (
         <ActivityIndicator size="large" color="#0000ff" style={styles.loadingContainer} />
       )}
+      {dataPluvTemp === undefined && (
+        <ActivityIndicator size="large" color="#0000ff" style={styles.loadingContainer} />
+      )}
       <View style={styles.header}>
         <View style={styles.title}>
           <Text style={styles.textTitle}>Resultado da pesquisa</Text>
         </View>
       </View>
-      <View style={styles.bodyContainer}>
+      <ScrollView style={styles.bodyContainer}>
         {/* Exibindo Latitude e Longitude */}
         <View style={styles.coordinatesContainer}>
           <Text style={styles.coordinateText}>
             Latitude: {params.latNumber.toFixed(5)} | Longitude: {params.longNumber.toFixed(5)}{' '}
           </Text>
         </View>
-
-        <View style={{ height: 800 }}>
+        <View style={{ gap: 20 }}>
           <View style={styles.serieHistorica}>
             <Text style={styles.textTitle}>Série Histórica</Text>
             <View style={{ height: 45, width: 45 }}>
-              <ButtonWithIcon
-                icon={<Feather name="more-horizontal" size={24} color="black" />}
-                title=""
-                width={45}
-                borderRadius={45}
-                height={45}
+              <ModalConfigGrafico
+                startDate={startDate}
+                endDate={endDate}
+                setStartDate={setStartDate}
+                setEndDate={setEndDate}
+                setdataPluvTemp={setdataPluvTemp}
+                latNumber={params.latNumber}
+                longNumber={params.longNumber}
               />
             </View>
           </View>
-          {dataPluvTemp !== undefined && <GraphicRainfall dataPluvTemp={dataPluvTemp.data} />}
           {dataPluvTemp !== undefined && <GraphicTemperature dataPluvTemp={dataPluvTemp.data} />}
+          {dataPluvTemp !== undefined && <GraphicRainfall dataPluvTemp={dataPluvTemp.data} />}
         </View>
-
-        {/* Contêiner para os campos de data lado a lado */}
-        <View style={styles.dateContainer}>
-          <InputComponent
-            label="Data de Início"
-            placeHolder="Dia/Mês/Ano"
-            value={startDate}
-            onChangeText={setStartDate}
-            maxLength={8}
-            inputWidth={150}
-            inputHeight={40}
-          />
-          <InputComponent
-            label="Data de Fim"
-            placeHolder="Dia/Mês/Ano"
-            value={endDate}
-            onChangeText={setEndDate}
-            maxLength={8}
-            inputWidth={150}
-            inputHeight={40}
-          />
-        </View>
-        
         {/* Botão "Salvar" adicionado */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            onPress={handleSave}
-            style={styles.customButton}
-          >
+          <InputComponent
+            label="Salvar Local"
+            value={nomeLocal}
+            inputWidth={300}
+            onChangeText={(text: string) => {
+              setNomeLocal(text);
+            }}
+          />
+          <TouchableOpacity onPress={handleSave} style={styles.customButton}>
             <Feather name="save" size={24} color="black" style={styles.icon} />
             <Text style={styles.buttonText}>Salvar</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
       <Footer navigation={navigation} />
     </KeyboardAvoidingView>
   );
@@ -197,8 +205,7 @@ const styles = StyleSheet.create({
   },
   bodyContainer: {
     marginTop: '20%',
-    alignItems: 'center',
-    paddingBottom: 80,
+    paddingBottom: 120,
   },
   coordinatesContainer: {
     flexDirection: 'row',
@@ -221,7 +228,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 80,
   },
   customButton: {
     backgroundColor: 'green',
@@ -233,7 +240,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   icon: {
-    marginRight: 10, 
+    marginRight: 10,
   },
   buttonText: {
     fontSize: 18,

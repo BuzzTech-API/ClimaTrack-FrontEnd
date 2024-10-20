@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Modal } from 'react-native';
+
 import { delLocation } from '~/api/deleteLocation';
 
 interface ConfirmDelLocationProps {
@@ -8,30 +9,28 @@ interface ConfirmDelLocationProps {
   idLocation: string;
 }
 
-export const ConfirmDelLocation: React.FC<ConfirmDelLocationProps> = ({ modalVisible, onCancel, idLocation }) => {
-
+export const ConfirmDelLocation: React.FC<ConfirmDelLocationProps> = ({
+  modalVisible,
+  onCancel,
+  idLocation,
+}) => {
   const handleDelete = async () => {
     try {
       const res = await delLocation(idLocation);
 
       if (res.sucesss) {
-        alert("Localização deletada com sucesso!");
+        alert('Localização deletada com sucesso!');
         onCancel();
       } else {
-        alert("Erro ao excluir localização: " + res.status);
+        alert('Erro ao excluir localização: ' + res.status);
       }
     } catch (error) {
-      alert("Erro inesperado ao tentar excluir a localização: " + error);
+      alert('Erro inesperado ao tentar excluir a localização: ' + error);
     }
   };
 
   return (
-    <Modal
-      animationType="fade"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={onCancel}
-    >
+    <Modal animationType="fade" transparent visible={modalVisible} onRequestClose={onCancel}>
       <View style={styles.centralizerContainer}>
         <View style={styles.mainContainer}>
           <View style={styles.containerText}>

@@ -1,66 +1,84 @@
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 interface AreaCardProps {
+  areaId: string;
   areaName: string;
   temperatureValue: number;
   humidityValue: number;
   latValue: number;
   longValue: number;
   alertNumber: number;
+  navigation: any;
   alertWarning1?: string;
   alertWarning2?: string;
 }
 
 const AreaCard: React.FC<AreaCardProps> = ({
+  areaId,
   areaName,
   temperatureValue,
   humidityValue,
   latValue,
   longValue,
+  navigation,
   alertNumber,
   alertWarning1,
   alertWarning2,
 }) => {
+  const handleClick = () => {
+    const inputValues = {
+      latNumber: latValue, //Valor de Latitude a ser enviado ao back
+      longNumber: longValue, //Valor de Longitude a ser enviado ao back
+      areaName,
+      areaId,
+    };
+
+    //aqui vai ser o redirecionamento para a outra página
+    navigation.navigate('saved', inputValues);
+  };
+
   return (
-    <TouchableOpacity style={styles.container}>
-        <View style={styles.card}>
-            <View style={styles.info}>
-                <Text style={styles.name}>{areaName}</Text>
-                <View style={styles.stats}>
-                    <Text style={styles.statsText}>{temperatureValue}C</Text>
-                    <Text style={styles.statsText}>{humidityValue}mm</Text>
-                </View>
-                <View style={styles.coordenates}>
-                    <Text style={styles.coordenatesText}> Lat:{latValue}</Text>
-                    <Text style={styles.coordenatesText}> Long:{longValue}</Text>
-                </View>
-            </View>
-            <View style={styles.alert}>
-            {/* Ivan Germano: Aqui eu precisei definir que caso o dado fosse 'undefined' ou 'null' ele deveria ser opcional*/}
-            <Text style={styles.number}>{alertNumber ?? 0} Alertas!</Text>
-                {alertWarning1 ? <Text style={styles.warning}>{alertWarning1}</Text> : null}
-                {alertWarning2 ? <Text style={styles.warning}>{alertWarning2}</Text> : null}
-            </View>
-        </View>
-        <View style={styles.alert}>
-          <View style={styles.warning}>
-            <MaterialCommunityIcons name="bell-ring" size={24} color="black" />
-            <Text style={styles.number}>{alertNumber} Alertas!</Text>
+    <TouchableOpacity style={styles.container} onPress={handleClick}>
+      <View style={styles.card}>
+        <View style={styles.info}>
+          <Text style={styles.name}>{areaName}</Text>
+          <View style={styles.stats}>
+            <Text style={styles.statsText}>{temperatureValue}C</Text>
+            <Text style={styles.statsText}>{humidityValue}mm</Text>
           </View>
-          <View style={styles.warning}>
-            <MaterialCommunityIcons name="alert" size={24} color="red" />
-            <Text style={styles.warningText}>{alertWarning1}</Text>
-          </View>
-          <View style={styles.warning}>
-            <MaterialCommunityIcons name="alert" size={24} color="red" />
-            <Text style={styles.warningText}>{alertWarning2}</Text>
+          <View style={styles.coordenates}>
+            <Text style={styles.coordenatesText}> Lat:{latValue}</Text>
+            <Text style={styles.coordenatesText}> Long:{longValue}</Text>
           </View>
         </View>
       </View>
+      {/*
+        <View style={styles.alert}>
+          Ivan Germano: Aqui eu precisei definir que caso o dado fosse 'undefined' ou 'null' ele deveria ser opcional
+          <Text style={styles.number}>{alertNumber ?? 0} Alertas!</Text>
+          {alertWarning1 ? <Text style={styles.warning}>{alertWarning1}</Text> : null}
+          {alertWarning2 ? <Text style={styles.warning}>{alertWarning2}</Text> : null}
+        </View>
+      </View>
+      <View style={styles.alert}>
+        <View style={styles.warning}>
+          <MaterialCommunityIcons name="bell-ring" size={24} color="black" />
+          <Text style={styles.number}>{alertNumber} Alertas!</Text>
+        </View>
+        <View style={styles.warning}>
+          <MaterialCommunityIcons name="alert" size={24} color="red" />
+          <Text style={styles.warningText}>{alertWarning1}</Text>
+        </View>
+        <View style={styles.warning}>
+          <MaterialCommunityIcons name="alert" size={24} color="red" />
+          <Text style={styles.warningText}>{alertWarning2}</Text>
+        </View>
+      </View>
+      */}
     </TouchableOpacity>
   );
 };
@@ -69,7 +87,6 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     alignItems: 'center',
-
   },
   card: {
     backgroundColor: 'rgba(147, 147, 147, 1)',
@@ -88,8 +105,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderRightColor: 'white',
-    borderRightWidth: 1,
   },
   name: {
     fontSize: 25,
@@ -109,7 +124,7 @@ const styles = StyleSheet.create({
   statsText: {
     fontSize: 25,
     fontWeight: '400',
-    color: 'white',  
+    color: 'white',
   },
   statsTextMM: {
     color: 'white',
@@ -147,7 +162,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: 'white',
   },
-  warningText: {    
+  warningText: {
     fontSize: 12,
     fontWeight: '400',
     color: 'white',
@@ -155,4 +170,3 @@ const styles = StyleSheet.create({
 });
 
 export default AreaCard;
-

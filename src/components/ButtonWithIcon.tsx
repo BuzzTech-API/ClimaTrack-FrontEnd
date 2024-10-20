@@ -1,5 +1,4 @@
-import Feather from '@expo/vector-icons/Feather';
-import { Component, ReactElement } from 'react';
+import React, { Component, ReactElement } from 'react';
 import { View, StyleSheet, Text, TouchableHighlight, GestureResponderEvent } from 'react-native';
 
 type Props = {

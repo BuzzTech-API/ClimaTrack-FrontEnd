@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, KeyboardType } from 'react-native';
 
 /*Props para modificar alguns elementos do style
 direto na pagina em que o componente foi utilizado
@@ -10,6 +10,7 @@ interface InputComponentProps {
   fontWeight?: '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
   placeHolder?: string;
   placeHolderWeight?: '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
+  keyboardType?: KeyboardType;
   inputSize?: number;
   inputWidth?: number;
   inputHeight?: number;
@@ -28,6 +29,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
   fontWeight,
   placeHolderWeight,
   inputSize,
+  keyboardType = 'numeric',
   inputWidth,
   inputHeight,
   warning,
@@ -37,6 +39,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
 }) => {
   return (
     <View style={styles.container}>
+      {label.length > 0 && <Text style={styles.label}>{label}</Text>}
       <TextInput
         style={[
           styles.input,
@@ -47,7 +50,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
             height: inputHeight,
           },
         ]}
-        keyboardType="numeric"
+        keyboardType={keyboardType}
         placeholder={placeHolder}
         placeholderTextColor="rgba(0, 0, 0, 0.6)"
         value={value}
@@ -79,8 +82,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   label: {
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
     marginBottom: 10,
+    color: '#000',
   },
   input: {
     borderRadius: 10,
@@ -88,6 +92,7 @@ const styles = StyleSheet.create({
     color: '#000',
     paddingLeft: 11,
     alignSelf: 'center',
+    marginLeft: 10
   },
   warning: {
     color: 'red',

@@ -1,15 +1,13 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import { Circle, useFont } from '@shopify/react-native-skia';
 import { format } from 'date-fns';
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, ActivityIndicator } from 'react-native';
 import Animated, { SharedValue, useAnimatedProps } from 'react-native-reanimated';
 import { CartesianChart, Line, useChartPressState } from 'victory-native';
+
 import { fetchPluviTemp } from '~/api/getPluvTemp';
 import { TempPluvData } from '~/types/resquestTempPluv';
-
-
 
 function converterStringParaData(dataStr: string): Date {
   const ano = parseInt(dataStr.substring(0, 4), 10);
@@ -37,7 +35,6 @@ type Props = {
 const GraphicTemperature: React.FC<Props> = ({ dataPluvTemp }) => {
   const { state, isActive } = useChartPressState({ x: 0, y: { temperature: 0 } });
   const font = useFont(require('src/fonts/Inter_24pt-Regular.ttf'));
-
 
   const data = dataPluvTemp.map((item, index) => ({
     day: converterStringParaData(item.day).getTime(),
@@ -97,7 +94,7 @@ const GraphicTemperature: React.FC<Props> = ({ dataPluvTemp }) => {
         {!isActive && (
           <View>
             <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#000' }}>
-              {data.length > 0 &&data[data.length - 1].temperature.toFixed(2)}°C
+              {data.length > 0 && data[0].temperature.toFixed(2)}°C
             </Text>
           </View>
         )}
@@ -124,6 +121,6 @@ const GraphicTemperature: React.FC<Props> = ({ dataPluvTemp }) => {
       </View>
     </View>
   );
-}
+};
 
 export default GraphicTemperature;

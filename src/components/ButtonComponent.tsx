@@ -28,7 +28,9 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={[styles.button, { width, height, borderRadius, elevation}]} onPress={onPress}>
+      <TouchableOpacity
+        style={[styles.button, { width, height, borderRadius, elevation }]}
+        onPress={onPress}>
         <Text style={[styles.buttonText, { fontSize, fontWeight }]}>{buttonText}</Text>
       </TouchableOpacity>
     </View>
@@ -42,8 +44,8 @@ ButtonComponent.defaultProps = {
   fontWeight: '500',
   width: 120,
   height: 45,
-  borderRadius:20,
-  elevation: 0
+  borderRadius: 20,
+  elevation: 0,
 };
 
 const styles = StyleSheet.create({

@@ -27,20 +27,24 @@ const AreaCard: React.FC<AreaCardProps> = ({
 }) => {
   return (
     <TouchableOpacity style={styles.container}>
-      <View style={styles.card}>
-        <View style={styles.info}>
-          <Text style={styles.name}> {areaName} </Text>
-          <View style={styles.stats}>
-            <FontAwesome6 name="temperature-half" size={40} color="white" />
-            <Text style={styles.statsText}> {temperatureValue}°C  </Text>
-            <MaterialIcons name="water-drop" size={40} color="white" />
-            <Text style={styles.statsText}>{humidityValue}</Text>
-            <Text style={styles.statsTextMM}>mm</Text>
-          </View>
-          <View style={styles.coordenates}>
-            <Text style={styles.coordenatesText}> Lat: {latValue} </Text>
-            <Text style={styles.coordenatesText}> Long: {longValue} </Text>
-          </View>
+        <View style={styles.card}>
+            <View style={styles.info}>
+                <Text style={styles.name}>{areaName}</Text>
+                <View style={styles.stats}>
+                    <Text style={styles.statsText}>{temperatureValue}C</Text>
+                    <Text style={styles.statsText}>{humidityValue}mm</Text>
+                </View>
+                <View style={styles.coordenates}>
+                    <Text style={styles.coordenatesText}> Lat:{latValue}</Text>
+                    <Text style={styles.coordenatesText}> Long:{longValue}</Text>
+                </View>
+            </View>
+            <View style={styles.alert}>
+            {/* Ivan Germano: Aqui eu precisei definir que caso o dado fosse 'undefined' ou 'null' ele deveria ser opcional*/}
+            <Text style={styles.number}>{alertNumber ?? 0} Alertas!</Text>
+                {alertWarning1 ? <Text style={styles.warning}>{alertWarning1}</Text> : null}
+                {alertWarning2 ? <Text style={styles.warning}>{alertWarning2}</Text> : null}
+            </View>
         </View>
         <View style={styles.alert}>
           <View style={styles.warning}>

@@ -1,8 +1,12 @@
+/* eslint-disable prettier/prettier */
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text, TouchableOpacity, Alert, TextInput, BackHandler} from 'react-native';
+import { editLocationName } from '~/api/editLocationName';
+import { editSavedLocation } from '~/types/editSavedLocation';
+
 
 interface AreaCardProps {
   areaId: string;
@@ -29,6 +33,28 @@ const AreaCard: React.FC<AreaCardProps> = ({
   alertWarning1,
   alertWarning2,
 }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState(areaName);
+
+  // Ivan Germano: UseEffect para capturar o evento do botão "voltar" e cancelar a edição do nome do local - Melhoria Heuristica.
+  useEffect(() => {
+    if (isEditing) {
+      const backAction = () => {
+        // Ivan Germano: Cancelar a edição quando o botão "voltar" for pressionado.
+        setIsEditing(false);
+        return true; // Ivan Germano: Indica que o evento foi tratado e não deve realizar a ação padrão (sair da tela).
+      };
+
+      // Ivan Germano: Adiciona o listener para o botão "voltar".
+      BackHandler.addEventListener('hardwareBackPress', backAction);
+
+      // Ivan Germano: Remove o listener quando o componente for desmontado ou quando não estiver mais editando.
+      return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
+    }
+  }, [isEditing]);
+
+  // Ivan Germano: Esse código não é meu, so estou comentando para facilitar o entendimento, esta função
+  // envia os dados para a pagina de "Detalhes do Local" e direciona para a página.
   const handleClick = () => {
     const inputValues = {
       latNumber: latValue, //Valor de Latitude a ser enviado ao back
@@ -41,19 +67,62 @@ const AreaCard: React.FC<AreaCardProps> = ({
     navigation.navigate('saved', inputValues);
   };
 
+  // Ivan Germano: Função para lidar com a edição do nome de local salvo
+  const handleSaveEdit = async () => {
+    if (!newName || newName.trim() === '') {
+      Alert.alert('Erro', 'O nome do local não pode estar vazio.');
+      return;
+    }
+    console.log('Iniciando edição do nome do local:', areaId, newName);
+    try {
+      const locationData: editSavedLocation = {
+        id_location: areaId,
+        new_name: newName,
+      };
+      const response = await editLocationName(locationData);
+      console.log('Resposta do servidor:', response);
+      Alert.alert('Sucesso', 'Nome do local atualizado com sucesso!');
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Erro ao tentar atualizar o nome do local:', error);
+      Alert.alert('Erro', 'Erro ao atualizar o nome do local.');
+    }
+  };
+
   return (
     <TouchableOpacity style={styles.container} onPress={handleClick}>
       <View style={styles.card}>
         <View style={styles.info}>
-          <Text style={styles.name}>{areaName}</Text>
-          <View style={styles.stats}>
-            <Text style={styles.statsText}>{temperatureValue}C</Text>
-            <Text style={styles.statsText}>{humidityValue}mm</Text>
-          </View>
-          <View style={styles.coordenates}>
-            <Text style={styles.coordenatesText}> Lat:{latValue.toFixed(5)}</Text>
-            <Text style={styles.coordenatesText}> Long:{longValue.toFixed(5)}</Text>
-          </View>
+        {isEditing ? (
+            <View style={styles.editContainer}>
+              <TextInput
+                style={styles.input}
+                value={newName}
+                onChangeText={setNewName}
+                placeholder="Novo nome do local"
+              />
+              <TouchableOpacity onPress={handleSaveEdit} style={styles.saveButton}>
+                <Text style={styles.buttonText}>Salvar</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <>
+              <View style={styles.header}>
+                <Text style={styles.name}>{areaName}</Text>
+                <TouchableOpacity onPress={() => setIsEditing(true)}>
+                  <FontAwesome6 name="edit" size={20} color="white" />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.stats}>
+                <Text style={styles.statsText}>{temperatureValue}C</Text>
+                <Text style={styles.statsText}>{humidityValue}mm</Text>
+              </View>
+              <View style={styles.coordenates}>
+                <Text style={styles.coordenatesText}> Lat: {latValue.toFixed(5)}</Text>
+                <Text style={styles.coordenatesText}> Long: {longValue.toFixed(5)}</Text>
+              </View>
+            </>
+          )}
         </View>
       </View>
       {/*
@@ -87,6 +156,39 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     alignItems: 'center',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    padding: 10,
+  },
+  input: {
+    fontSize: 20,
+    fontWeight: '500',
+    color: 'black',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    width: '70%',
+    padding: 8,
+  },
+  editContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+  saveButton: {
+    backgroundColor: 'rgba(40, 167, 69, 1)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 14,
   },
   card: {
     backgroundColor: 'rgba(147, 147, 147, 1)',

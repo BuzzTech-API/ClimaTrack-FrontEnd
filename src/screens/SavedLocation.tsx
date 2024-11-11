@@ -14,6 +14,7 @@ import Footer from '~/components/Footer';
 import Header from '~/components/Header';
 import InputComponent from '~/components/InputComponent';
 import ModalConfigGrafico from '~/components/ModalConfigGrafico';
+import ModalConfigLocal from '~/components/ModalConfigLocal';
 import GraphicRainfall from '~/components/graphicRainfall';
 import GraphicTemperature from '~/components/graphicTemperature';
 import { fetchCurrentClimate } from '~/services/currentLocationService';
@@ -40,7 +41,7 @@ type ParamList = {
 };
 
 type Props = StackScreenProps<ParamList, 'saved'>;
-type SavedScreenNavigationProp = StackNavigationProp<ParamList, 'saved'>;
+export type SavedScreenNavigationProp = StackNavigationProp<ParamList, 'saved'>;
 
 interface SavedScreenProps {
     navigation: SavedScreenNavigationProp;
@@ -144,30 +145,14 @@ const SavedLocation: React.FC<Props & SavedScreenProps> = ({ navigation, route }
         <View style={styles.container}>
             <Header
                 title={params.areaName}
-                icon={
-                    <ButtonComponent
-                        elevation={10}
-                        borderRadius={100}
-                        width={48}
-                        buttonText={<FontAwesome name="trash" size={24} color="black" />}
-                        onPress={() => onOpen()}
-                        fontSize={20}
-                    />
-                }
+                icon={<ModalConfigLocal navigation={navigation} idLocation={params.areaId} />}
                 flexDirection="row-reverse"
-                gap={20}
+                justifyContent="space-between"
+                gap={150}
+                width="99%"
             />
-            <View style={[styles.buttonsContainer, { paddingHorizontal: 2 }]}>
+            <View style={[styles.buttonsContainer, { paddingHorizontal: 2, flexDirection: 'row' }]}>
                 {/* Esse é o botão de APAGAR!!! */}
-
-                <ConfirmDelLocation
-                    modalVisible={isOpen}
-                    navigation={navigation}
-                    onCancel={onClose}
-                    idLocation={params.areaId}
-                />
-                {/* Esse é o botão de notificações não mexa por agora */}
-                {/* <ButtonComponent borderRadius={100} width={48} buttonText={<Ionicons name="notifications-sharp" size={24} color="white" />} onPress={() => setShowHistory(true)} fontSize={20}></ButtonComponent> */}
             </View>
             <ScrollView style={{ marginTop: 60, marginBottom: 55 }}>
                 <View style={styles.tempEchuva} /* Temperatura e Pluviosidade */>

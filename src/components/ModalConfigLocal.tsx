@@ -1,13 +1,29 @@
 import { Feather } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { Modal, StyleSheet, Text, TextInput, View, Switch, ScrollView, TouchableOpacity } from 'react-native';
 import Slider from '@react-native-community/slider';
+import React, { useState } from 'react';
+import {
+    Modal,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
+    Switch,
+    ScrollView,
+    TouchableOpacity,
+} from 'react-native';
 
 import ButtonWithIcon from './ButtonWithIcon';
+import { ConfirmDelLocation } from './ConfirmDelLocation';
 
-const ModalConfigLocal = () => {
+import { SavedScreenNavigationProp } from '~/screens/SavedLocation';
+type props = {
+    navigation: SavedScreenNavigationProp;
+    idLocation: string;
+    nomeLocal: string;
+    setNomeLocal: React.Dispatch<React.SetStateAction<string>>;
+};
+const ModalConfigLocal = ({ navigation, idLocation, nomeLocal, setNomeLocal }: props) => {
     const [modalVisible, setModalVisible] = useState(false);
-    const [nomeLocal, setNomeLocal] = useState(''); // Estado para armazenar o nome do local
     const [disponivelOffline, setDisponivelOffline] = useState(false); // Estado para a checkbox (usando Switch)
     const [calorMin, setCalorMin] = useState(20); // Estado para o valor mínimo de calor
     const [calorMax, setCalorMax] = useState(40); // Estado para o valor máximo de calor
@@ -18,6 +34,10 @@ const ModalConfigLocal = () => {
     const [pluviosidadeMinProlongado, setPluviosidadeMinProlongado] = useState(0); // Estado para pluviosidade mínima (alerta prolongado)
     const [pluviosidadeMaxProlongado, setPluviosidadeMaxProlongado] = useState(100); // Estado para pluviosidade máxima (alerta prolongado)
     const [duracaoDias, setDuracaoDias] = useState(''); // Estado para armazenar a duração em dias
+
+    const [isOpen, setIsOpen] = React.useState(false);
+    const onOpen = () => setIsOpen(true);
+    const onClose = () => setIsOpen(false);
 
     return (
         <View style={styles.centeredView}>
@@ -50,21 +70,25 @@ const ModalConfigLocal = () => {
                                 value={nomeLocal}
                                 onChangeText={setNomeLocal}
                             />
-                            
+
                             {/* Switch para Disponível sem acesso à internet */}
                             <View style={styles.checkboxContainer}>
                                 <Switch
                                     value={disponivelOffline}
                                     onValueChange={setDisponivelOffline}
                                 />
-                                <Text style={styles.checkboxLabel}>Disponível sem acesso à internet</Text>
+                                <Text style={styles.checkboxLabel}>
+                                    Disponível sem acesso à internet
+                                </Text>
                             </View>
 
                             {/*Configuração de alertas*/}
                             <Text style={styles.subTitle}>Configuração de alertas</Text>
 
                             {/* Calor: Min - Max */}
-                            <Text style={styles.rangeLabel}>Calor: {calorMin}°C - {calorMax}°C</Text>
+                            <Text style={styles.rangeLabel}>
+                                Calor: {calorMin}°C - {calorMax}°C
+                            </Text>
                             <View style={styles.sliderContainer}>
                                 <Slider
                                     style={styles.slider}
@@ -89,7 +113,9 @@ const ModalConfigLocal = () => {
                             </View>
 
                             {/* Pluviosidade: Min - Max */}
-                            <Text style={styles.rangeLabel}>Pluviosidade: {pluviosidadeMin}% - {pluviosidadeMax}%</Text>
+                            <Text style={styles.rangeLabel}>
+                                Pluviosidade: {pluviosidadeMin}% - {pluviosidadeMax}%
+                            </Text>
                             <View style={styles.sliderContainer}>
                                 <Slider
                                     style={styles.slider}
@@ -116,8 +142,10 @@ const ModalConfigLocal = () => {
                             {/*Configuração de alertas prolongado" */}
                             <Text style={styles.subTitle}>Configuração de alertas Prolongado</Text>
 
-                             {/* Calor Prolongado: Min - Max */}
-                            <Text style={styles.rangeLabel}>Calor: {calorMinProlongado}°C - {calorMaxProlongado}°C</Text>
+                            {/* Calor Prolongado: Min - Max */}
+                            <Text style={styles.rangeLabel}>
+                                Calor: {calorMinProlongado}°C - {calorMaxProlongado}°C
+                            </Text>
                             <View style={styles.sliderContainer}>
                                 <Slider
                                     style={styles.slider}
@@ -142,7 +170,10 @@ const ModalConfigLocal = () => {
                             </View>
 
                             {/* Pluviosidade Prolongada: Min - Max */}
-                            <Text style={styles.rangeLabel}>Pluviosidade: {pluviosidadeMinProlongado}% - {pluviosidadeMaxProlongado}%</Text>
+                            <Text style={styles.rangeLabel}>
+                                Pluviosidade: {pluviosidadeMinProlongado}% -{' '}
+                                {pluviosidadeMaxProlongado}%
+                            </Text>
                             <View style={styles.sliderContainer}>
                                 <Slider
                                     style={styles.slider}
@@ -173,12 +204,22 @@ const ModalConfigLocal = () => {
                                 placeholder="Digite a duração em dias"
                                 value={duracaoDias}
                                 onChangeText={setDuracaoDias}
-                                keyboardType="numeric" 
+                                keyboardType="numeric"
                             />
 
                             {/* Botões Excluir Local e Atualizar*/}
                             <View style={styles.buttonsContainer}>
-                                <TouchableOpacity style={styles.button} onPress={() => {}}>
+                                <ConfirmDelLocation
+                                    modalVisible={isOpen}
+                                    navigation={navigation}
+                                    onCancel={onClose}
+                                    idLocation={idLocation}
+                                />
+                                <TouchableOpacity
+                                    style={styles.button}
+                                    onPress={() => {
+                                        onOpen();
+                                    }}>
                                     <Text style={styles.buttonText}>Excluir local</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.button} onPress={() => {}}>
@@ -189,7 +230,7 @@ const ModalConfigLocal = () => {
                     </View>
                 </View>
             </Modal>
-            <View style={{ height: 45, width: 45 }}>
+            <View style={{ height: 45, width: 45, alignSelf: 'center' }}>
                 <ButtonWithIcon
                     icon={<Feather name="more-horizontal" size={24} color="black" />}
                     title=""
@@ -225,11 +266,11 @@ const styles = StyleSheet.create({
     },
     closeButton: {
         alignSelf: 'flex-end',
-        margin: 5, 
+        margin: 5,
     },
     scrollViewContainer: {
         paddingBottom: 50,
-        paddingRight: 10, 
+        paddingRight: 10,
     },
     label: {
         fontSize: 16,
@@ -272,7 +313,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
-        marginTop: 15, 
+        marginTop: 15,
     },
     button: {
         backgroundColor: 'black',
@@ -287,6 +328,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-
 
 export default ModalConfigLocal;

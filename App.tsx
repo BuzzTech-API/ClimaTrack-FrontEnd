@@ -12,18 +12,34 @@ import SearchLocation from '~/screens/SearchLocation';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  return (
-    <GestureHandlerRootView>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="search">
-          <Stack.Screen name="search" component={SearchLocation} options={{ headerShown: false }} />
-          {/* esse erro é estranho mas ele continua funcionando normal, olhe e ignore */}
-          <Stack.Screen name="result" component={ResultScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="saved" component={SavedLocation} options={{ headerShown: false }} />
-          <Stack.Screen name="areas" component={MyAreas} options={{ headerShown: false }} />
-        </Stack.Navigator>
-      </NavigationContainer>
-      <Toast />
-    </GestureHandlerRootView>
-  );
+    return (
+        <GestureHandlerRootView>
+            <NavigationContainer>
+                <Stack.Navigator initialRouteName="search">
+                    <Stack.Screen
+                        name="search"
+                        component={SearchLocation}
+                        options={{ headerShown: false }}
+                    />
+                    {/* esse erro é estranho mas ele continua funcionando normal, olhe e ignore */}
+                    <Stack.Screen
+                        name="result"
+                        component={ResultScreen}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="saved"
+                        component={SavedLocation}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="areas"
+                        component={MyAreas}
+                        options={{ headerShown: false }}
+                    />
+                </Stack.Navigator>
+            </NavigationContainer>
+            <Toast />
+        </GestureHandlerRootView>
+    );
 }

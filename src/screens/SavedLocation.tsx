@@ -7,6 +7,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 
 import { fetchPluviTemp } from '~/api/getPluvTemp';
+import { fetchNotification } from '~/api/notification';
 import ButtonComponent from '~/components/ButtonComponent';
 import ButtonWithIcon from '~/components/ButtonWithIcon';
 import { ConfirmDelLocation } from '~/components/ConfirmDelLocation';
@@ -15,9 +16,12 @@ import Header from '~/components/Header';
 import InputComponent from '~/components/InputComponent';
 import ModalConfigGrafico from '~/components/ModalConfigGrafico';
 import ModalConfigLocal from '~/components/ModalConfigLocal';
+import NotificationList from '~/components/NotificationList';
+import NotificationModal from '~/components/NotificationModal';
 import GraphicRainfall from '~/components/graphicRainfall';
 import GraphicTemperature from '~/components/graphicTemperature';
 import { fetchCurrentClimate } from '~/services/currentLocationService';
+import { Notification } from '~/types/Notification';
 import { TempPluvData } from '~/types/resquestTempPluv';
 
 type ParamList = {
@@ -56,23 +60,12 @@ function converterDataParaNumero(dataStr: string): number {
     // Retorne como número
     return parseInt(dataFormatada, 10);
 }
-//Esse "navigation" é a navegação de telas. Se eu não me engano é usado na tela q vem antes dessa (a de locais salvos)
-//de novo acredito que se basear-se na tela de Pesquisa -> Resultado deve se deus quiser dar tudo certo
 const SavedLocation: React.FC<Props & SavedScreenProps> = ({ navigation, route }) => {
-    //!!!!!!!!!!!!!!!!!!!!!
-    //Desses params faz o novo fetch, ouuu a gnt troca as props q vem no route para vir direto os dados mais facil assim
-    //Aqui ta todos os parametros que vem de outra tela
     const params = route.params;
 
-    //parametros necessários para funcionar o site, só fazer o fetch novo ou trazer da outra tela
-
-    //todos esses parametros estão sendo utilizados para mostrar para o usuário, troque eles nas tags <>
-    //e pegue eles vindo da outra tela ouu fazendo um fetch novo com a lat e long que vem da outra tela
-
-    //ai a data tem q vir de lá tbm eu acho pq o usuário ja colocou né enfim o campo ta ai em baixo o useState só trocar ali
-    // Pega a data de 2 dias antes de hoje e seta como data inicial e a data de um mes atras como data de inicio
+    // Pega a data de 4 dias antes de hoje e seta como data final e a data de um mes atras como data de inicio
     const nowDate = new Date();
-    nowDate.setDate(nowDate.getDate() - 2);
+    nowDate.setDate(nowDate.getDate() - 4);
     const day = nowDate.getDate().toString();
     const nowMonth =
         nowDate.getMonth() + 1 >= 10
@@ -98,6 +91,19 @@ const SavedLocation: React.FC<Props & SavedScreenProps> = ({ navigation, route }
     // const [showHistory, setShowHistory] = useState(true);
     const onOpen = () => setIsOpen(true);
     const onClose = () => setIsOpen(false);
+    const [nomeLocal, setNomeLocal] = useState(params.areaName); // Estado para armazenar o nome do local
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+    const [isModalVisible, setModalVisible] = useState(false);
+    const handleSelectNotification = (notification: Notification) => {
+        setSelectedNotification(notification);
+        setModalVisible(true);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedNotification(null);
+        setModalVisible(false);
+    };
 
     React.useEffect(() => {
         (async () => {
@@ -105,6 +111,9 @@ const SavedLocation: React.FC<Props & SavedScreenProps> = ({ navigation, route }
             setPluviometry(climateData['precipitation (mm)']);
             setMaxTemp(climateData['temperature_max (C°)']);
             setMinTemp(climateData['temperature_min (C°)']);
+
+            const notificationsFetch: Notification[] = await fetchNotification(params.areaId);
+            setNotifications(notificationsFetch);
         })();
         return () => {};
     }, []);
@@ -144,16 +153,20 @@ const SavedLocation: React.FC<Props & SavedScreenProps> = ({ navigation, route }
     return (
         <View style={styles.container}>
             <Header
-                title={params.areaName}
-                icon={<ModalConfigLocal navigation={navigation} idLocation={params.areaId} />}
+                title={nomeLocal}
+                icon={
+                    <ModalConfigLocal
+                        navigation={navigation}
+                        idLocation={params.areaId}
+                        nomeLocal={nomeLocal}
+                        setNomeLocal={setNomeLocal}
+                    />
+                }
                 flexDirection="row-reverse"
                 justifyContent="space-between"
                 gap={150}
                 width="99%"
             />
-            <View style={[styles.buttonsContainer, { paddingHorizontal: 2, flexDirection: 'row' }]}>
-                {/* Esse é o botão de APAGAR!!! */}
-            </View>
             <ScrollView style={{ marginTop: 60, marginBottom: 55 }}>
                 <View style={styles.tempEchuva} /* Temperatura e Pluviosidade */>
                     {/* Title */}
@@ -196,7 +209,17 @@ const SavedLocation: React.FC<Props & SavedScreenProps> = ({ navigation, route }
                         </View>
                     </View>
                 </View>
-
+                <View style={{ flex: 1 }}>
+                    <NotificationList
+                        notifications={notifications}
+                        onSelectNotification={handleSelectNotification}
+                    />
+                    <NotificationModal
+                        notification={selectedNotification}
+                        visible={isModalVisible}
+                        onClose={handleCloseModal}
+                    />
+                </View>
                 {/* COLOCAR OS 2 TIPOS DE GRÁFICOS AQUI IGUAL ESSES AQUI NORMAL SEM BO (teoricamente) */}
                 <View style={{ gap: 20 }}>
                     <View style={styles.serieHistorica}>

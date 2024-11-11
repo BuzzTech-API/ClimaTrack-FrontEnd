@@ -24,17 +24,16 @@ import { editSavedLocation } from '../types/editSavedLocation';
 
 // Ivan Germano: Função para atualizar o nome de uma localização salva no backend
 export const editLocationName = async (locationData: editSavedLocation) => {
-  try {
-    const response = await api.put('/edit_location_name', null, {
-      params: {
-        id_location: locationData.id_location,
-        new_name: locationData.new_name,
-      },
-    });
-    console.log('Resposta recebida do servidor:', response);
-    return response.data;
-  } catch (error) {
-    console.error('Erro ao atualizar o nome da localização:', error);
-    throw new Error('Erro ao atualizar o nome da localização.');
-  }
+    try {
+        const response = await api.put('/edit_location_name', null, {
+            params: {
+                id_location: locationData.id_location,
+                new_name: locationData.new_name,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao atualizar o nome da localização:', error);
+        throw new Error('Erro ao atualizar o nome da localização.');
+    }
 };

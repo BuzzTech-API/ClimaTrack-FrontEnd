@@ -10,12 +10,16 @@ import {
     Switch,
     ScrollView,
     TouchableOpacity,
+    Alert,
 } from 'react-native';
 
 import ButtonWithIcon from './ButtonWithIcon';
 import { ConfirmDelLocation } from './ConfirmDelLocation';
 
+import { editLocationName } from '~/api/editLocationName';
+import { addLocationParameters } from '~/api/notification';
 import { SavedScreenNavigationProp } from '~/screens/SavedLocation';
+import { editSavedLocation } from '~/types/editSavedLocation';
 type props = {
     navigation: SavedScreenNavigationProp;
     idLocation: string;
@@ -38,6 +42,33 @@ const ModalConfigLocal = ({ navigation, idLocation, nomeLocal, setNomeLocal }: p
     const [isOpen, setIsOpen] = React.useState(false);
     const onOpen = () => setIsOpen(true);
     const onClose = () => setIsOpen(false);
+    const handleSubmit = async () => {
+        if (!nomeLocal || nomeLocal.trim() === '') {
+            Alert.alert('Erro', 'O nome do local não pode estar vazio.');
+            return;
+        }
+        //console.log('Iniciando edição do nome do local:', areaId, newName);
+        try {
+            const locationData: editSavedLocation = {
+                id_location: idLocation,
+                new_name: nomeLocal,
+            };
+            const response = await editLocationName(locationData);
+            //console.log('Resposta do servidor:', response);
+            Alert.alert('Sucesso', 'Nome do local atualizado com sucesso!');
+            const parametersResponse = await addLocationParameters({
+                location_id: idLocation,
+                min_temp: calorMin,
+                max_temp: calorMax,
+                min_pluvi: pluviosidadeMin,
+                max_pluvi: pluviosidadeMax,
+                duracao_max: duracaoDias,
+            });
+        } catch (error) {
+            console.error('Erro ao tentar atualizar o nome do local:', error);
+            Alert.alert('Erro', 'Erro ao atualizar o nome do local.');
+        }
+    };
 
     return (
         <View style={styles.centeredView}>
@@ -222,7 +253,7 @@ const ModalConfigLocal = ({ navigation, idLocation, nomeLocal, setNomeLocal }: p
                                     }}>
                                     <Text style={styles.buttonText}>Excluir local</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.button} onPress={() => {}}>
+                                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                                     <Text style={styles.buttonText}>Atualizar</Text>
                                 </TouchableOpacity>
                             </View>

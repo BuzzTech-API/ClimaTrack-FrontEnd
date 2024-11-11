@@ -6,10 +6,10 @@ export const fetchCurrentClimate = async (latitude: number, longitude: number) =
     try {
         // Ivan Germano: Faz uma requisição GET para a rota '/climate/current' com os parâmetros de latitude e longitude
         const response = await api.get('/climate/current', {
-            params: { latitude, longitude }
+            params: { latitude, longitude },
         });
         // Ivan Germano: Loga os dados climáticos recebidos para depuração
-        console.log('Dados climáticos recebidos:', response.data);
+        //console.log('Dados climáticos recebidos:', response.data);
 
         // Ivan Germano: Aqui retorna apenas o valor do dia atual (segundo elemento do JSON)
         const currentClimate = response.data[1];

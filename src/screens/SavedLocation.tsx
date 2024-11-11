@@ -7,6 +7,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 
 import { fetchPluviTemp } from '~/api/getPluvTemp';
+import { fetchNotification } from '~/api/notification';
 import ButtonComponent from '~/components/ButtonComponent';
 import ButtonWithIcon from '~/components/ButtonWithIcon';
 import { ConfirmDelLocation } from '~/components/ConfirmDelLocation';
@@ -14,9 +15,13 @@ import Footer from '~/components/Footer';
 import Header from '~/components/Header';
 import InputComponent from '~/components/InputComponent';
 import ModalConfigGrafico from '~/components/ModalConfigGrafico';
+import ModalConfigLocal from '~/components/ModalConfigLocal';
+import NotificationList from '~/components/NotificationList';
+import NotificationModal from '~/components/NotificationModal';
 import GraphicRainfall from '~/components/graphicRainfall';
 import GraphicTemperature from '~/components/graphicTemperature';
 import { fetchCurrentClimate } from '~/services/currentLocationService';
+import { Notification } from '~/types/Notification';
 import { TempPluvData } from '~/types/resquestTempPluv';
 
 type ParamList = {
@@ -40,7 +45,7 @@ type ParamList = {
 };
 
 type Props = StackScreenProps<ParamList, 'saved'>;
-type SavedScreenNavigationProp = StackNavigationProp<ParamList, 'saved'>;
+export type SavedScreenNavigationProp = StackNavigationProp<ParamList, 'saved'>;
 
 interface SavedScreenProps {
     navigation: SavedScreenNavigationProp;
@@ -48,64 +53,70 @@ interface SavedScreenProps {
 
 function converterDataParaNumero(dataStr: string): number {
     // Divida a string da data em dia, mês e ano
-    const [dia, mes, ano] = dataStr.split("/");
+    const [dia, mes, ano] = dataStr.split('/');
 
     // Concatene ano, mês e dia no formato YYYYMMDD e converta para número
     const dataFormatada = `${ano}${mes}${dia}`;
-
     // Retorne como número
-    return parseInt(dataFormatada,10);
+    return parseInt(dataFormatada, 10);
 }
-//Esse "navigation" é a navegação de telas. Se eu não me engano é usado na tela q vem antes dessa (a de locais salvos)
-//de novo acredito que se basear-se na tela de Pesquisa -> Resultado deve se deus quiser dar tudo certo
 const SavedLocation: React.FC<Props & SavedScreenProps> = ({ navigation, route }) => {
-    //!!!!!!!!!!!!!!!!!!!!!
-    //Desses params faz o novo fetch, ouuu a gnt troca as props q vem no route para vir direto os dados mais facil assim
-    //Aqui ta todos os parametros que vem de outra tela
     const params = route.params;
 
-    //parametros necessários para funcionar o site, só fazer o fetch novo ou trazer da outra tela
-
-    //todos esses parametros estão sendo utilizados para mostrar para o usuário, troque eles nas tags <>
-    //e pegue eles vindo da outra tela ouu fazendo um fetch novo com a lat e long que vem da outra tela
-
-    //ai a data tem q vir de lá tbm eu acho pq o usuário ja colocou né enfim o campo ta ai em baixo o useState só trocar ali
-    // Pega a data de 2 dias antes de hoje e seta como data inicial e a data de um mes atras como data de inicio
-    const nowDate = new Date()
-    nowDate.setDate(nowDate.getDate() - 2)
-    const day = nowDate.getDate().toString()
-    const nowMonth = (nowDate.getMonth() + 1 >= 10) ? (nowDate.getMonth() + 1).toString() : '0'.concat((nowDate.getMonth() + 1).toString())
-    nowDate.setMonth(nowDate.getMonth() - 1)
-    const month = (nowDate.getMonth() + 1) >= 10 ? (nowDate.getMonth() + 1).toString() : '0'.concat((nowDate.getMonth() + 1).toString())
-    const year = nowDate.getFullYear().toString()
-    const date = day + '/' + month + '/' + year
-    const date2 = day + '/' + nowMonth + '/' + year
-
+    // Pega a data de 4 dias antes de hoje e seta como data final e a data de um mes atras como data de inicio
+    const nowDate = new Date();
+    nowDate.setDate(nowDate.getDate() - 4);
+    const day = nowDate.getDate().toString();
+    const nowMonth =
+        nowDate.getMonth() + 1 >= 10
+            ? (nowDate.getMonth() + 1).toString()
+            : '0'.concat((nowDate.getMonth() + 1).toString());
+    nowDate.setMonth(nowDate.getMonth() - 1);
+    const month =
+        nowDate.getMonth() + 1 >= 10
+            ? (nowDate.getMonth() + 1).toString()
+            : '0'.concat((nowDate.getMonth() + 1).toString());
+    const year = nowDate.getFullYear().toString();
+    const date = day + '/' + month + '/' + year;
+    const date2 = day + '/' + nowMonth + '/' + year;
 
     const [startDate, setStartDate] = React.useState<string>(date); // Para a data de início
     const [endDate, setEndDate] = React.useState<string>(date2); // Para a data de fim
     const [isOpen, setIsOpen] = React.useState(false);
-    const [maxTemp, setMaxTemp] = useState(0)
-    const [minTemp, setMinTemp] = useState(0)
-    const [pluviometry, setPluviometry] = useState(0)
-    const [dataPluvTemp, setdataPluvTemp] = useState<TempPluvData>()
+    const [maxTemp, setMaxTemp] = useState(0);
+    const [minTemp, setMinTemp] = useState(0);
+    const [pluviometry, setPluviometry] = useState(0);
+    const [dataPluvTemp, setdataPluvTemp] = useState<TempPluvData>();
     // ignora isso aqui é pra notificação depois
     // const [showHistory, setShowHistory] = useState(true);
     const onOpen = () => setIsOpen(true);
     const onClose = () => setIsOpen(false);
+    const [nomeLocal, setNomeLocal] = useState(params.areaName); // Estado para armazenar o nome do local
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+    const [isModalVisible, setModalVisible] = useState(false);
+    const handleSelectNotification = (notification: Notification) => {
+        setSelectedNotification(notification);
+        setModalVisible(true);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedNotification(null);
+        setModalVisible(false);
+    };
 
     React.useEffect(() => {
         (async () => {
-
             const climateData = await fetchCurrentClimate(params.latNumber, params.longNumber);
-            setPluviometry(climateData['precipitation (mm)'])
-            setMaxTemp(climateData['temperature_max (C°)'])
-            setMinTemp(climateData['temperature_min (C°)'])
+            setPluviometry(climateData['precipitation (mm)']);
+            setMaxTemp(climateData['temperature_max (C°)']);
+            setMinTemp(climateData['temperature_min (C°)']);
 
+            const notificationsFetch: Notification[] = await fetchNotification(params.areaId);
+            setNotifications(notificationsFetch);
         })();
-        return () => {
-        }
-    }, [])
+        return () => {};
+    }, []);
 
     const getGraphicsData = async () => {
         try {
@@ -131,42 +142,31 @@ const SavedLocation: React.FC<Props & SavedScreenProps> = ({ navigation, route }
             });
         } finally {
         }
-
-
-    }
+    };
 
     React.useEffect(() => {
+        getGraphicsData();
 
-        getGraphicsData()
-
-        return () => {
-
-        }
-    }, [])
-
+        return () => {};
+    }, []);
 
     return (
         <View style={styles.container}>
             <Header
-                title={params.areaName}
-                icon={<ButtonComponent
-                    elevation={10}
-                    borderRadius={100}
-                    width={48}
-                    buttonText={<FontAwesome name="trash" size={24} color="black" />}
-                    onPress={() => onOpen()}
-                    fontSize={20}
-                />}
-                flexDirection='row-reverse'
-                gap={20}
+                title={nomeLocal}
+                icon={
+                    <ModalConfigLocal
+                        navigation={navigation}
+                        idLocation={params.areaId}
+                        nomeLocal={nomeLocal}
+                        setNomeLocal={setNomeLocal}
+                    />
+                }
+                flexDirection="row-reverse"
+                justifyContent="space-between"
+                gap={150}
+                width="99%"
             />
-            <View style={[styles.buttonsContainer, { paddingHorizontal: 2 }]}>
-                {/* Esse é o botão de APAGAR!!! */}
-
-                <ConfirmDelLocation modalVisible={isOpen} onCancel={onClose} idLocation={params.areaId} />
-                {/* Esse é o botão de notificações não mexa por agora */}
-                {/* <ButtonComponent borderRadius={100} width={48} buttonText={<Ionicons name="notifications-sharp" size={24} color="white" />} onPress={() => setShowHistory(true)} fontSize={20}></ButtonComponent> */}
-            </View>
             <ScrollView style={{ marginTop: 60, marginBottom: 55 }}>
                 <View style={styles.tempEchuva} /* Temperatura e Pluviosidade */>
                     {/* Title */}
@@ -175,13 +175,23 @@ const SavedLocation: React.FC<Props & SavedScreenProps> = ({ navigation, route }
                         {/* Max Temperature */}
                         <View style={[styles.tempContainer, { minWidth: 170 }]}>
                             <Text style={styles.label}>Max</Text>
-                            <FontAwesome name="thermometer-full" size={24} color="red" style={styles.icon} />
+                            <FontAwesome
+                                name="thermometer-full"
+                                size={24}
+                                color="red"
+                                style={styles.icon}
+                            />
                             <Text style={styles.value}>{maxTemp.toFixed(1)}°C</Text>
                         </View>
                         {/* Min Temperature */}
                         <View style={styles.tempContainer}>
                             <Text style={styles.label}>Min</Text>
-                            <FontAwesome name="thermometer-empty" size={24} color="blue" style={styles.icon} />
+                            <FontAwesome
+                                name="thermometer-empty"
+                                size={24}
+                                color="blue"
+                                style={styles.icon}
+                            />
                             <Text style={styles.value}>{minTemp.toFixed(1)}°C</Text>
                         </View>
                     </View>
@@ -199,18 +209,39 @@ const SavedLocation: React.FC<Props & SavedScreenProps> = ({ navigation, route }
                         </View>
                     </View>
                 </View>
-
+                <View style={{ flex: 1 }}>
+                    <NotificationList
+                        notifications={notifications}
+                        onSelectNotification={handleSelectNotification}
+                    />
+                    <NotificationModal
+                        notification={selectedNotification}
+                        visible={isModalVisible}
+                        onClose={handleCloseModal}
+                    />
+                </View>
                 {/* COLOCAR OS 2 TIPOS DE GRÁFICOS AQUI IGUAL ESSES AQUI NORMAL SEM BO (teoricamente) */}
                 <View style={{ gap: 20 }}>
                     <View style={styles.serieHistorica}>
                         <Text style={styles.textTitle}>Série Histórica</Text>
                         <View style={{ height: 45, width: 45 }}>
-                            <ModalConfigGrafico startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} setdataPluvTemp={setdataPluvTemp} latNumber={params.latNumber} longNumber={params.longNumber} />
+                            <ModalConfigGrafico
+                                startDate={startDate}
+                                endDate={endDate}
+                                setStartDate={setStartDate}
+                                setEndDate={setEndDate}
+                                setdataPluvTemp={setdataPluvTemp}
+                                latNumber={params.latNumber}
+                                longNumber={params.longNumber}
+                            />
                         </View>
                     </View>
-                    {dataPluvTemp !== undefined && (<GraphicTemperature dataPluvTemp={dataPluvTemp.data} />)}
-                    {dataPluvTemp !== undefined && (<GraphicRainfall dataPluvTemp={dataPluvTemp.data} />)}
-
+                    {dataPluvTemp !== undefined && (
+                        <GraphicTemperature dataPluvTemp={dataPluvTemp.data} />
+                    )}
+                    {dataPluvTemp !== undefined && (
+                        <GraphicRainfall dataPluvTemp={dataPluvTemp.data} />
+                    )}
                 </View>
                 {/*ignora isso aqui é da notificação depois 
                 {showHistory ? <GraphicTemperature /> : <AlertCard />} */}
@@ -300,9 +331,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         width: '100%',
-        height: 50
+        height: 50,
     },
 });
 
 export default SavedLocation;
-

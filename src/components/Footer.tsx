@@ -23,12 +23,23 @@ const Footer = ({ navigation }: props) => {
             />
             <ButtonWithIcon
                 title="Meus Locais"
-                width={150}
+                width={100}
                 height={60}
                 onPress={() => {
                     navigation.replace('areas');
                 }}
                 icon={<Entypo name="location-pin" size={24} color="red" />}
+                activeBackgroudColor="#F1F3F0"
+                backgroundColor="#FFF"
+            />
+            <ButtonWithIcon
+                title="Ajuda"
+                width={150}
+                height={60}
+                onPress={() => {
+                    navigation.navigate('help');
+                }}
+                icon={<Entypo name="help" size={24} color="black" />}
                 activeBackgroudColor="#F1F3F0"
                 backgroundColor="#FFF"
             />
@@ -44,7 +55,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         shadowColor: 'black',
-        elevation: 20,
+        elevation: 0,
         position: 'absolute',
         gap: 10,
         paddingHorizontal: 20,
@@ -53,7 +64,7 @@ const styles = StyleSheet.create({
         right: 0,
     },
     button: {
-        width: 170,
+        width: 130,
         height: 85,
         alignItems: 'center',
     },

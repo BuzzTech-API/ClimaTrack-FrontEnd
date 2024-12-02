@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
+import HelpScreen from '~/screens/HelpScreen';
 
 import MyAreas from '~/screens/MyAreas';
 import ResultScreen from '~/screens/ResultScreen';
@@ -35,6 +36,11 @@ export default function App() {
                     <Stack.Screen
                         name="areas"
                         component={MyAreas}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="help"
+                        component={HelpScreen}
                         options={{ headerShown: false }}
                     />
                 </Stack.Navigator>
